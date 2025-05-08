@@ -72,15 +72,17 @@ npm install
 ```
 
 3. **Configure o arquivo .env:**
-
+```text
 PORT=3000
 DB_HOST=localhost
 DB_USER=seu_usuario
 DB_PASSWORD=sua_senha
 DB_NAME=gerenciador_tarefas
 DB_DIALECT=postgres
+```
 
 4. **Configure o banco de dados:**
+
 Execute o script SQL localizado em documentos/modelo.sql no seu SGBD (PostgreSQL com Supabase).
 
 5. **Inicie o servidor:**
