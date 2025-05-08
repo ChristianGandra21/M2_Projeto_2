@@ -26,6 +26,7 @@ O sistema será implementado utilizando a arquitetura MVC (Model-View-Controller
 Além das funcionalidades básicas de CRUD (Create, Read, Update, Delete), o projeto será estruturado de forma modular, com foco em boas práticas de desenvolvimento e testes automatizados. O sistema também contará com documentação de apoio, scripts para inicialização do banco de dados e testes de requisições HTTP para facilitar o uso e entendimento.
 
 Com isso, o Gerenciador de Tarefas propõe-se não apenas como uma ferramenta funcional para organização pessoal, mas também como um exercício completo de desenvolvimento web, integrando conceitos teóricos à prática. O projeto será uma base sólida para evoluções futuras, permitindo a adição de novas funcionalidades conforme o amadurecimento técnico do time de desenvolvimento.
+
 ---
 
 ## <a name="c2"></a>2. Visão Geral da Aplicação Web
