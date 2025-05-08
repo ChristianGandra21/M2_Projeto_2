@@ -9,50 +9,51 @@ O sistema permite:
 - Editar e deletar tarefas
 
 ## Estrutura de Pastas:
+```Text
 gerenciador-tarefas/
-│
 ├── assets/                    # Arquivos públicos como ícones e imagens
 │   └── favicon.ico
 ├── config/                    # Configuração do banco de dados
 │   └── db.js
-├── controllers/               # Lógica das requisições HTTP
+├── controllers/              # Lógica das requisições HTTP
 │   ├── homeController.js
 │   └── userController.js
-├── documentos/                # Documentação do projeto
-│   ├── modelo_relacional.png  # Diagrama relacional do banco
-│   ├── modelo.sql             # Script SQL para criação do banco
-│   └── wad.md                 # Documento WAD com introdução e diagrama
-├── models/                    # Modelos que representam as tabelas
+├── documentos/               # Documentação do projeto
+│   ├── modelo_relacional.png # Diagrama relacional do banco
+│   ├── modelo.sql            # Script SQL para criação do banco
+│   └── wad.md                # Documento WAD com introdução e diagrama
+├── models/                   # Modelos que representam as tabelas
 │   └── userModel.js
-├── node_modules/              # Dependências instaladas
-├── routes/                    # Definição das rotas
+├── node_modules/             # Dependências instaladas
+├── routes/                   # Definição das rotas
 │   ├── frontRoutes.js
 │   ├── index.js
 │   └── userRoutes.js
-├── scripts/                   # Scripts utilitários
+├── scripts/                  # Scripts utilitários
 │   ├── init.sql
 │   └── runSQLScript.js
-├── services/                  # Regras de negócio
+├── services/                 # Regras de negócio
 │   └── userService.js
-├── tests/                     # Testes automatizados
+├── tests/                    # Testes automatizados
 │   ├── userController.test.js
 │   ├── userModel.test.js
 │   ├── userRoutes.test.js
 │   └── userService.test.js
-├── views/                     # Views para renderização
-│   ├── components/            # Componentes reutilizáveis
-│   ├── css/                   # Arquivos de estilo
-│   ├── layout/                # Layout base
-│   └── pages/                 # Páginas da aplicação
-├── .env                       # Variáveis de ambiente
-├── .gitattributes             # Configurações de versionamento Git
-├── .gitignore                 # Ignorar arquivos no Git
-├── jest.config.js             # Configuração do Jest
-├── package-lock.json          # Lockfile do NPM
-├── package.json               # Configurações e dependências do projeto
-├── readme.md                  # Documentação do projeto
-├── rest.http                  # Teste de requisições HTTP
-└── server.js                  # Inicialização do servidor
+├── views/                    # Views para renderização
+│   ├── components/           # Componentes reutilizáveis
+│   ├── css/                  # Arquivos de estilo
+│   ├── layout/               # Layout base
+│   └── pages/                # Páginas da aplicação
+├── .env                      # Variáveis de ambiente
+├── .gitattributes            # Configurações de versionamento Git
+├── .gitignore                # Ignorar arquivos no Git
+├── jest.config.js            # Configuração do Jest
+├── package-lock.json         # Lockfile do NPM
+├── package.json              # Configurações e dependências do projeto
+├── readme.md                 # Documentação do projeto
+├── rest.http                 # Teste de requisições HTTP
+└── server.js                 # Inicialização do servidor
+```
 
 
 ## 🚀 Como Executar o Projeto Localmente
