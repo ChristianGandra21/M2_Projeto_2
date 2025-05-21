@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Gerenciador de Tarefas</title>
+</head>
+<body>
+  <h1>Cadastro de Tarefas</h1>
+
+  <form action="/tasks" method="POST">
+    <input name="title" placeholder="Título" required>
+    <input name="description" placeholder="Descrição">
+    
+    <select name="user_id">
+      <option value="">Atribuir a um usuário</option>
+      <% users.forEach(user => { %>
+        <option value="<%= user.id %>"><%= user.name %></option>
+      <% }) %>
+    </select>
+
+    <button type="submit">Adicionar Tarefa</button>
+  </form>
+
+  <h2>Cadastrar novo usuário</h2>
+  <form action="/users" method="POST">
+    <input name="name" placeholder="Nome" required>
+    <input name="email" placeholder="Email" required>
+    <button type="submit">Adicionar Usuário</button>
+  </form>
+
+  <hr>
+
+  <ul>
+    <% tasks.forEach(task => { %>
+      <li>
+        <strong><%= task.title %></strong> - <%= task.description %> 
+        (Responsável: <%= task.user || 'Sem usuário' %>)
+        <form action="/tasks/edit/<%= task.id %>" method="POST" style="display:inline">
+          <input name="title" placeholder="Novo título" required>
+          <input name="description" placeholder="Nova descrição">
+          <input type="checkbox" name="completed" value="true"> Concluído
+          <button type="submit">Editar</button>
+        </form>
+        <form action="/tasks/delete/<%= task.id %>" method="POST" style="display:inline">
+          <button type="submit">Apagar</button>
+        </form>
+      </li>
+    <% }) %>
+  </ul>
+</body>
+</html>
