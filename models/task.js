@@ -2,17 +2,18 @@ const db = require('../config/db');
 
 module.exports = {
   async create(data) {
-    const query = `
-      INSERT INTO tasks (title, description, user_id)
-      VALUES ($1, $2, $3)
-    `;
-    const values = [data.title, data.description, data.user_id || null];
-    return db.query(query, values);
-  },
+  const query = `
+    INSERT INTO tasks (title, description, due_date, user_id)
+    VALUES ($1, $2, $3, $4)
+  `;
+  const values = [data.title, data.description, data.due_date, data.user_id || null];
+  return db.query(query, values);
+},
+
 
   async findAll() {
     const query = `
-      SELECT tasks.id, tasks.title, tasks.description, tasks.completed, users.name AS user
+      SELECT tasks.id, tasks.title, tasks.description, tasks.completed, tasks.due_date, users.name AS user
       FROM tasks
       LEFT JOIN users ON tasks.user_id = users.id
       ORDER BY tasks.id ASC

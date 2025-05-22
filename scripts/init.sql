@@ -3,8 +3,9 @@
 -- Extensão para UUID
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
-DROP TABLE tasks;
-DROP TABLE users;
+-- Apagar tabelas, se existirem
+DROP TABLE IF EXISTS tasks;
+DROP TABLE IF EXISTS users;
 
 -- Tabela de usuários
 CREATE TABLE IF NOT EXISTS users (
@@ -19,6 +20,7 @@ CREATE TABLE IF NOT EXISTS tasks (
   title TEXT NOT NULL,
   description TEXT,
   completed BOOLEAN DEFAULT false,
+  due_date DATE,
   user_id UUID,
   CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
 );
