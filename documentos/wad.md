@@ -33,11 +33,12 @@ Com isso, o Gerenciador de Tarefas propõe-se não apenas como uma ferramenta fu
 
 ### 2.1. Personas (Semana 01)
 
-*Não se aplica ao projeto.*
+*(não se aplica)*
 
 ### 2.2. User Stories (Semana 01)
 
-*Não se aplica ao projeto.*
+*(não se aplica)*
+
 
 ---
 
@@ -108,35 +109,65 @@ CREATE TABLE tasks (
 Essa estrutura proporciona uma base sólida e bem normalizada para o funcionamento do sistema, assegurando a integridade dos dados e a escalabilidade do banco. Com as relações bem definidas entre usuários, tarefas e categorias, o modelo permite consultas eficientes e facilita futuras manutenções ou expansões no sistema.
 
 ### 3.1.1 BD e Models (Semana 5)
-*Descreva aqui os Models implementados no sistema web*
+O sistema web desenvolvido utiliza o PostgreSQL como banco de dados relacional, estruturado em duas tabelas principais: users e tasks. Essas tabelas são responsáveis por armazenar os dados dos usuários e das tarefas do sistema, respectivamente. A estrutura foi criada manualmente utilizando comandos SQL, sem o uso de ORMs, garantindo controle direto sobre o esquema do banco.
+
+A tabela users armazena informações dos usuários responsáveis pelas tarefas. Cada usuário possui um identificador único gerado automaticamente (id do tipo UUID), além de campos obrigatórios como name (nome completo) e email (endereço de e-mail único). Essa tabela serve como referência para associar um responsável a cada tarefa cadastrada.
+
+A tabela tasks, por sua vez, é responsável por armazenar as tarefas do sistema. Cada tarefa possui um identificador (id do tipo serial), um title (título da tarefa), uma description (descrição opcional), um campo booleano completed que indica se a tarefa está concluída, e um campo due_date (do tipo DATE), que representa a data de vencimento da tarefa. Além disso, existe o campo user_id, que é uma chave estrangeira opcional referenciando a tabela users. Caso o campo user_id não seja preenchido, a tarefa será considerada sem um responsável atribuído.
+
+No código, essas interações com o banco são feitas por meio de arquivos de Model, localizados na pasta models/. Esses arquivos implementam funções assíncronas que executam comandos SQL utilizando o pacote pg. Entre os principais métodos definidos no taskModel.js, estão:
+
+**create(data)**: Insere uma nova tarefa no banco, com ou sem usuário responsável.
+
+**findAll()**: Retorna todas as tarefas cadastradas, incluindo o nome do usuário associado (quando houver).
+
+**findByUser(user_id)**: Filtra as tarefas de um determinado usuário.
+
+**update(id, data)**: Atualiza os dados de uma tarefa existente, incluindo status de conclusão e data de vencimento.
+
+**delete(id)**: Exclui uma tarefa com base no seu ID.
+
+A camada de Models, portanto, representa a base de dados da aplicação, sendo responsável por realizar as operações de leitura, escrita e atualização de forma segura e controlada. Essa arquitetura garante uma separação clara entre a lógica de acesso aos dados e as demais camadas da aplicação, facilitando a manutenção e a escalabilidade do sistema.
 
 ### 3.2. Arquitetura (Semana 5)
 
-*Posicione aqui o diagrama de arquitetura da sua solução de aplicação web. Atualize sempre que necessário.*
-
-**Instruções para criação do diagrama de arquitetura**  
-- **Model**: A camada que lida com a lógica de negócios e interage com o banco de dados.
-- **View**: A camada responsável pela interface de usuário.
-- **Controller**: A camada que recebe as requisições, processa as ações e atualiza o modelo e a visualização.
-  
-*Adicione as setas e explicações sobre como os dados fluem entre o Model, Controller e View.*
+O diagrama abaixo representa a arquitetura MVC (Model-View-Controller) do sistema de gerenciamento de tarefas. 
+<div align="center">
+<sub>Figura 2 - Diagrama da arquitetura MVC</sub>
+<img height="100%" width="100%" src="../assets/arquitetura_mvc.png"> </img>
+<sup>Fonte: Material produzido pelos autores (2025)</sup>
+</div>
+A camada Model define a estrutura dos dados e interage com o banco de dados PostgreSQL, incluindo as tabelas users (com campos como id, name e email) e tasks (com id, title, description, due_date e user_id). A camada Controller centraliza a lógica de negócio por meio dos arquivos taskController.js e userController.js, que recebem as requisições da interface, processam os dados e interagem com o Model. A camada View representa a interface do usuário, exibindo formulários e listas de tarefas, permitindo ações como criar ou editar. O fluxo ocorre da View para o Controller, que consulta ou atualiza o Model, retornando os dados para a View. Esse padrão organiza a aplicação de forma modular e facilita a manutenção.
 
 ### 3.3. Wireframes (Semana 03)
 
-*Posicione aqui as imagens do wireframe construído para sua solução e, opcionalmente, o link para acesso (mantenha o link sempre público para visualização).*
+*(não se aplica)*
 
 ### 3.4. Guia de estilos (Semana 05)
 
-*Descreva aqui orientações gerais para o leitor sobre como utilizar os componentes do guia de estilos de sua solução.*
-
+*(não se aplica)*
 
 ### 3.5. Protótipo de alta fidelidade (Semana 05)
 
-*Posicione aqui algumas imagens demonstrativas de seu protótipo de alta fidelidade e o link para acesso ao protótipo completo (mantenha o link sempre público para visualização).*
+*(não se aplica)*
 
 ### 3.6. WebAPI e endpoints (Semana 05)
 
-*Utilize um link para outra página de documentação contendo a descrição completa de cada endpoint. Ou descreva aqui cada endpoint criado para seu sistema.*  
+A aplicação foi estruturada com uma WebAPI em Node.js utilizando o framework Express, seguindo os princípios da arquitetura REST. Os endpoints foram organizados de forma a atender às operações CRUD básicas tanto para usuários quanto para tarefas, respeitando a separação de responsabilidades proposta pela arquitetura MVC.
+
+Para o recurso usuários, foi implementado o endpoint POST /users, que permite a criação de um novo usuário a partir do envio dos campos name e email. Além disso, o endpoint GET /users/:id/tasks permite listar todas as tarefas associadas a um usuário específico, com base no id fornecido na URL.
+
+Para o recurso tarefas, foram implementados os seguintes endpoints:
+
+GET /tasks: recupera a lista completa de tarefas cadastradas no sistema, incluindo informações como título, descrição, status de conclusão, data de vencimento (due_date) e o nome do usuário responsável (caso exista).
+
+POST /tasks: permite a criação de uma nova tarefa com os campos title, description, due_date (data no formato ISO) e user_id (opcional, para vincular a tarefa a um usuário existente).
+
+POST /tasks/edit/:id: atualiza uma tarefa existente, identificada pelo seu id, com novos valores para title, description, due_date e completed.
+
+POST /tasks/delete/:id: remove uma tarefa com base em seu id.
+
+Esses endpoints são acessados por meio de formulários HTML (View), e processados pelos controllers, que por sua vez se comunicam diretamente com os Models (consultas SQL sem ORM). O fluxo segue o padrão MVC, com cada camada desempenhando sua função específica: a View envia os dados via formulário, o Controller os trata e os encaminha para o Model, que executa a ação no banco de dados e retorna os resultados.
 
 ### 3.7 Interface e Navegação (Semana 07)
 
