@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>Criar Nova Tarefa</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <h1>Criar Nova Tarefa</h1>
+  <form action="/tasks" method="POST">
+    <label for="title">Título:</label>
+    <input type="text" id="title" name="title" required />
+
+    <label for="description">Descrição:</label>
+    <textarea id="description" name="description"></textarea>
+
+    <label for="status">Status:</label>
+    <select id="status" name="status">
+      <option value="pendente">Pendente</option>
+      <option value="em andamento">Em Andamento</option>
+      <option value="concluída">Concluída</option>
+    </select>
+
+    <label for="category">Categoria:</label>
+    <input type="text" id="category" name="category" />
+
+    <label for="user_id">ID do Usuário:</label>
+    <input type="number" id="user_id" name="user_id" required />
+
+    <button type="submit">Salvar Tarefa</button>
+  </form>
+
+  <a href="/tasks">← Voltar para lista</a>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>Tarefas Interativas</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <h1>Minhas Tarefas (Fetch API)</h1>
+
+  <ul id="lista-tarefas"></ul>
+
+  <hr />
+  <h2>Nova Tarefa</h2>
+  <form id="form-tarefa">
+    <input type="text" name="title" placeholder="Título" required />
+    <input type="text" name="description" placeholder="Descrição" />
+    <select name="status">
+      <option value="pendente">Pendente</option>
+      <option value="em andamento">Em Andamento</option>
+      <option value="concluída">Concluída</option>
+    </select>
+    <input type="text" name="category" placeholder="Categoria" />
+    <input type="number" name="user_id" placeholder="ID do usuário" required />
+    <button type="submit">Criar</button>
+  </form>
+
+  <script src="/js/tarefas.js"></script>
+</body>
+</html>

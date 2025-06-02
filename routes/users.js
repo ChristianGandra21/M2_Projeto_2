@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const controller = require('../controllers/userController');
+const userController = require('../controllers/userController');
 
-router.post('/', controller.create);
+// API REST de usuários
+router.post('/users', userController.create);
 
 module.exports = router;

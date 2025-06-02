@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>Criar Tarefa</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Nova Tarefa</h1>
+    <form id="task-form">
+      <input type="text" id="title" name="title" placeholder="Título" required />
+      <textarea id="description" name="description" placeholder="Descrição"></textarea>
+      <input type="date" id="due_date" name="due_date" />
+      
+      <select id="user_id" name="user_id">
+        <option value="">Sem usuário</option>
+        <% users.forEach(user => { %>
+          <option value="<%= user.id %>"><%= user.name %></option>
+        <% }) %>
+      </select>
+
+      <button type="submit">Criar</button>
+    </form>
+    <a href="/"><button>Voltar</button></a>
+  </div>
+  <script src="/js/tasks.js"></script>
+</body>
+</html>

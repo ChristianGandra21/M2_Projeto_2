@@ -1,11 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const controller = require('../controllers/taskController');
+const taskController = require('../controllers/taskController');
 
-router.get('/', controller.index);
-router.post('/', controller.store);
-router.post('/edit/:id', controller.update);
-router.post('/delete/:id', controller.destroy);
-router.get('/user/:user_id', controller.byUser);
+// API REST de tarefas
+router.post('/tasks', taskController.create);
+router.put('/tasks/:id', taskController.update);
+router.delete('/tasks/:id', taskController.delete);
 
 module.exports = router;
