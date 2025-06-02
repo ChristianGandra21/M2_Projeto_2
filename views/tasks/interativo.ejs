@@ -1,30 +1,134 @@
 <!DOCTYPE html>
-<html lang="pt-br">
-<head>
-  <meta charset="UTF-8" />
-  <title>Tarefas Interativas</title>
-  <link rel="stylesheet" href="/css/style.css" />
-</head>
-<body>
-  <h1>Minhas Tarefas (Fetch API)</h1>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title || 'Lista de Tarefas' %></title>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>📋 Lista de Tarefas</h1>
+        <nav>
+          <a href="/tasks" class="btn btn-primary">📋 Tarefas</a>
+          <a href="/tasks/new" class="btn btn-secondary">➕ Nova Tarefa</a>
+          <a href="/users" class="btn btn-secondary">👤 Usuários</a>
+        </nav>
+      </header>
 
-  <ul id="lista-tarefas"></ul>
+      <main>
+        <!-- Seção de Lista de Tarefas -->
+        <div class="card">
+          <h2>📝 Minhas Tarefas</h2>
 
-  <hr />
-  <h2>Nova Tarefa</h2>
-  <form id="form-tarefa">
-    <input type="text" name="title" placeholder="Título" required />
-    <input type="text" name="description" placeholder="Descrição" />
-    <select name="status">
-      <option value="pendente">Pendente</option>
-      <option value="em andamento">Em Andamento</option>
-      <option value="concluída">Concluída</option>
-    </select>
-    <input type="text" name="category" placeholder="Categoria" />
-    <input type="number" name="user_id" placeholder="ID do usuário" required />
-    <button type="submit">Criar</button>
-  </form>
+          <% if (tasks.length === 0) { %>
+          <div class="alert alert-info">
+            <p>
+              Nenhuma tarefa encontrada.
+              <a href="/tasks/new">Criar primeira tarefa</a>
+            </p>
+          </div>
+          <% } else { %>
+          <div class="task-grid">
+            <% tasks.forEach(task => { %>
+            <div class="task-card <%= task.completed ? 'completed' : '' %>">
+              <div class="task-header">
+                <h3 class="task-title"><%= task.title %></h3>
+                <span
+                  class="task-status <%= task.completed ? 'status-completed' : 'status-pending' %>"
+                >
+                  <%= task.completed ? '✅ Concluída' : '⏳ Pendente' %>
+                </span>
+              </div>
 
-  <script src="/js/tarefas.js"></script>
-</body>
+              <div class="task-body">
+                <p class="task-description">
+                  <%= task.description || 'Sem descrição' %>
+                </p>
+
+                <div class="task-meta">
+                  <% if (task.user) { %>
+                  <span class="task-user">👤 <%= task.user %></span>
+                  <% } %> <% if (task.due_date) { %>
+                  <span class="task-date"
+                    >📅 <%= new Date(task.due_date).toLocaleDateString('pt-BR')
+                    %></span
+                  >
+                  <% } %>
+                </div>
+              </div>
+
+              <div class="task-actions">
+                <a
+                  href="/tasks/edit/<%= task.id %>"
+                  class="btn btn-sm btn-secondary"
+                  >✏️ Editar</a
+                >
+                <form
+                  action="/tasks/toggle/<%= task.id %>"
+                  method="POST"
+                  style="display: inline"
+                >
+                  <button
+                    type="submit"
+                    class="btn btn-sm <%= task.completed ? 'btn-warning' : 'btn-success' %>"
+                  >
+                    <%= task.completed ? '↩️ Reabrir' : '✅ Concluir' %>
+                  </button>
+                </form>
+                <form
+                  action="/tasks/delete/<%= task.id %>"
+                  method="POST"
+                  style="display: inline"
+                  onsubmit="return confirm('Tem certeza que deseja excluir esta tarefa?')"
+                >
+                  <button type="submit" class="btn btn-sm btn-danger">
+                    🗑️ Excluir
+                  </button>
+                </form>
+              </div>
+            </div>
+            <% }) %>
+          </div>
+          <% } %>
+        </div>
+
+        <!-- Estatísticas (Atualizadas via fetch()) -->
+        <div class="card">
+          <h3>📊 Estatísticas</h3>
+          <div class="stats-grid">
+            <div class="stat-item">
+              <span class="stat-number" id="totalTasks">0</span>
+              <span class="stat-label">Total de Tarefas</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number" id="completedTasks">0</span>
+              <span class="stat-label">Concluídas</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number" id="pendingTasks">0</span>
+              <span class="stat-label">Pendentes</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Container para alertas -->
+        <div id="alertContainer"></div>
+
+        <!-- Lista de Tarefas (Carregada via fetch()) -->
+        <div class="card">
+          <h2>📋 Lista de Tarefas Interativa</h2>
+          <div id="taskList">
+            <div class="alert alert-info">
+              <p>🔄 Carregando tarefas via fetch()...</p>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Scripts para interatividade com fetch() -->
+    <script src="/js/interactive.js"></script>
+  </body>
 </html>

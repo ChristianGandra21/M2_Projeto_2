@@ -1,23 +1,27 @@
-const express = require('express');
+const express = require("express");
 const app = express();
-const path = require('path');
-const bodyParser = require('body-parser');
+const path = require("path");
+const bodyParser = require("body-parser");
 
-const indexRoutes = require('./routes/index');
-const taskRoutes = require('./routes/tasks');
-const userRoutes = require('./routes/users');
+const indexRoutes = require("./routes/index");
+const taskRoutes = require("./routes/tasks");
+const userRoutes = require("./routes/users");
 
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
 
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, "public")));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Rotas
-app.use('/', indexRoutes);         // páginas EJS
-app.use('/api', taskRoutes);       // API de tarefas
-app.use('/api', userRoutes);       // API de usuários
+// Rotas para Views EJS (renderização de páginas)
+app.use("/", indexRoutes); // página inicial
+app.use("/tasks", taskRoutes); // páginas de tarefas
+app.use("/users", userRoutes); // páginas de usuários
+
+// Rotas para API (fetch() - retornam JSON)
+app.use("/api/tasks", taskRoutes); // API de tarefas
+app.use("/api/users", userRoutes); // API de usuários
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

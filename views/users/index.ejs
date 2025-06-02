@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title || 'Lista de Usuários' %></title>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>👤 Lista de Usuários</h1>
+        <nav>
+          <a href="/tasks" class="btn btn-primary">📋 Tarefas</a>
+          <a href="/users/new" class="btn btn-secondary">➕ Novo Usuário</a>
+        </nav>
+      </header>
+
+      <main>
+        <!-- Seção de Lista de Usuários -->
+        <div class="card">
+          <h2>👥 Usuários Cadastrados</h2>
+
+          <% if (users.length === 0) { %>
+          <div class="alert alert-info">
+            <p>
+              Nenhum usuário encontrado.
+              <a href="/users/new">Cadastrar primeiro usuário</a>
+            </p>
+          </div>
+          <% } else { %>
+          <div class="users-grid">
+            <% users.forEach(user => { %>
+            <div class="user-card">
+              <div class="user-avatar">
+                <span class="avatar-text"
+                  ><%= user.name.charAt(0).toUpperCase() %></span
+                >
+              </div>
+
+              <div class="user-info">
+                <h3 class="user-name"><%= user.name %></h3>
+                <p class="user-email">📧 <%= user.email %></p>
+                <p class="user-id">🆔 ID: <%= user.id %></p>
+                <% if (user.created_at) { %>
+                <p class="user-date">
+                  📅 Cadastrado em: <%= new
+                  Date(user.created_at).toLocaleDateString('pt-BR') %>
+                </p>
+                <% } %>
+              </div>
+
+              <div class="user-actions">
+                <a
+                  href="/users/edit/<%= user.id %>"
+                  class="btn btn-sm btn-secondary"
+                  >✏️ Editar</a
+                >
+                <a
+                  href="/tasks/user/<%= user.id %>"
+                  class="btn btn-sm btn-primary"
+                  >📋 Ver Tarefas</a
+                >
+                <form
+                  action="/users/delete/<%= user.id %>"
+                  method="POST"
+                  style="display: inline"
+                  onsubmit="return confirm('Tem certeza que deseja excluir este usuário?')"
+                >
+                  <button type="submit" class="btn btn-sm btn-danger">
+                    🗑️ Excluir
+                  </button>
+                </form>
+              </div>
+            </div>
+            <% }) %>
+          </div>
+          <% } %>
+        </div>
+
+        <!-- Estatísticas (Atualizadas via fetch()) -->
+        <div class="card">
+          <h3>📊 Estatísticas</h3>
+          <div class="stats-grid">
+            <div class="stat-item">
+              <span class="stat-number" id="totalUsers">0</span>
+              <span class="stat-label">Total de Usuários</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number" id="newUsers">0</span>
+              <span class="stat-label">Novos (30 dias)</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number" id="validEmails">0</span>
+              <span class="stat-label">Com Email Válido</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Container para alertas -->
+        <div id="alertContainer"></div>
+
+        <!-- Lista de Usuários (Carregada via fetch()) -->
+        <div class="card">
+          <h2>👥 Lista de Usuários Interativa</h2>
+          <div id="userList">
+            <div class="alert alert-info">
+              <p>🔄 Carregando usuários via fetch()...</p>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Scripts para interatividade com fetch() -->
+    <script src="/js/interactive.js"></script>
+  </body>
+</html>

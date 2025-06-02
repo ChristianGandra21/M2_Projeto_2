@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title || 'Editar Tarefa' %></title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>✏️ Editar Tarefa</h1>
+            <nav>
+                <a href="/tasks" class="btn btn-secondary">← Voltar para Lista</a>
+                <a href="/users" class="btn btn-secondary">👤 Usuários</a>
+            </nav>
+        </header>
+
+        <main>
+            <div class="card">
+                <h2>📝 Editar Tarefa: <%= task.title %></h2>
+                
+                <form action="/tasks/edit/<%= task.id %>" method="POST" class="task-form">
+                    <div class="form-group">
+                        <label for="title">Título da Tarefa *</label>
+                        <input 
+                            type="text" 
+                            id="title" 
+                            name="title" 
+                            class="form-control" 
+                            value="<%= task.title %>"
+                            placeholder="Digite o título da tarefa"
+                            required 
+                        />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Descrição</label>
+                        <textarea 
+                            id="description" 
+                            name="description" 
+                            class="form-control" 
+                            rows="4"
+                            placeholder="Descreva os detalhes da tarefa"
+                        ><%= task.description || '' %></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="user_id">Responsável</label>
+                            <select id="user_id" name="user_id" class="form-control">
+                                <option value="">Selecione um usuário</option>
+                                <% if (typeof users !== 'undefined') { %>
+                                    <% users.forEach(user => { %>
+                                        <option value="<%= user.id %>" <%= task.user_id == user.id ? 'selected' : '' %>>
+                                            <%= user.name %>
+                                        </option>
+                                    <% }) %>
+                                <% } %>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="due_date">Data de Vencimento</label>
+                            <input 
+                                type="date" 
+                                id="due_date" 
+                                name="due_date" 
+                                class="form-control"
+                                value="<%= task.due_date ? task.due_date.toISOString().split('T')[0] : '' %>"
+                            />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input 
+                                type="checkbox" 
+                                name="completed" 
+                                value="true"
+                                <%= task.completed ? 'checked' : '' %>
+                            />
+                            <span class="checkmark"></span>
+                            Tarefa concluída
+                        </label>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            💾 Salvar Alterações
+                        </button>
+                        <a href="/tasks" class="btn btn-secondary">
+                            ❌ Cancelar
+                        </a>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Informações da Tarefa -->
+            <div class="card">
+                <h3>ℹ️ Informações da Tarefa</h3>
+                <div class="task-info">
+                    <div class="info-item">
+                        <strong>ID:</strong> <%= task.id %>
+                    </div>
+                    <div class="info-item">
+                        <strong>Status:</strong> 
+                        <span class="status-badge <%= task.completed ? 'completed' : 'pending' %>">
+                            <%= task.completed ? '✅ Concluída' : '⏳ Pendente' %>
+                        </span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Criada em:</strong> 
+                        <%= task.created_at ? new Date(task.created_at).toLocaleDateString('pt-BR') : 'Data não disponível' %>
+                    </div>
+                    <% if (task.due_date) { %>
+                        <div class="info-item">
+                            <strong>Vencimento:</strong> 
+                            <span class="<%= new Date(task.due_date) < new Date() && !task.completed ? 'overdue' : '' %>">
+                                <%= new Date(task.due_date).toLocaleDateString('pt-BR') %>
+                                <% if (new Date(task.due_date) < new Date() && !task.completed) { %>
+                                    ⚠️ Atrasada
+                                <% } %>
+                            </span>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+
+            <!-- Ações Rápidas -->
+            <div class="card">
+                <h3>⚡ Ações Rápidas</h3>
+                <div class="quick-actions">
+                    <form action="/tasks/toggle/<%= task.id %>" method="POST" style="display: inline;">
+                        <button type="submit" class="btn <%= task.completed ? 'btn-warning' : 'btn-success' %>">
+                            <%= task.completed ? '↩️ Reabrir Tarefa' : '✅ Marcar como Concluída' %>
+                        </button>
+                    </form>
+                    
+                    <form action="/tasks/delete/<%= task.id %>" method="POST" style="display: inline;" 
+                          onsubmit="return confirm('Tem certeza que deseja excluir esta tarefa? Esta ação não pode ser desfeita.')">
+                        <button type="submit" class="btn btn-danger">
+                            🗑️ Excluir Tarefa
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="/js/app.js"></script>
+</body>
+</html>
