@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Usuários</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<header><%- include('partials/header') %></header>
+<body>
+  <h1>👤 Usuários</h1>
+  <nav>
+    <a href="/">⬅️ Voltar</a>
+  </nav>
+
+  <form id="new-user-form">
+    <label>Nome: <input type="text" name="name" required></label><br>
+    <label>Email: <input type="email" name="email" required></label><br>
+    <button type="submit">💾 Cadastrar</button>
+  </form>
+
+  <ul id="user-list"></ul>
+
+  <script>
+    async function renderUsers() {
+      const res = await fetch('/api/users');
+      const users = await res.json();
+
+      const list = document.getElementById('user-list');
+      list.innerHTML = '';
+      users.forEach(user => {
+        const li = document.createElement('li');
+        li.textContent = `${user.name} (${user.email})`;
+        list.appendChild(li);
+      });
+    }
+
+    document.getElementById('new-user-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const data = {
+        name: form.name.value,
+        email: form.email.value
+      };
+      await fetch('/api/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      form.reset();
+      renderUsers();
+    });
+
+    renderUsers();
+  </script>
+</body>
+<%- include('partials/footer') %>
+</html>

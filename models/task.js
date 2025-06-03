@@ -2,14 +2,15 @@ const db = require('../config/db');
 
 module.exports = {
   async create(data) {
-  const query = `
-    INSERT INTO tasks (title, description, due_date, user_id)
-    VALUES ($1, $2, $3, $4)
-  `;
-  const values = [data.title, data.description, data.due_date, data.user_id || null];
-  return db.query(query, values);
-},
-
+    const query = `
+      INSERT INTO tasks (title, description, due_date, user_id)
+      VALUES ($1, $2, $3, $4)
+      RETURNING *
+    `;
+    const values = [data.title, data.description, data.due_date, data.user_id || null];
+    const result = await db.query(query, values);
+    return result.rows[0];
+  },
 
   async findAll() {
     const query = `

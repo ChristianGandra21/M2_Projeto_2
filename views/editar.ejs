@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>✏️ Editar Tarefa</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <header>
+    <%- include('partials/header') %>
+    <h1>✏️ Editar Tarefa</h1>
+    <nav>
+      <a href="/tarefas">📄 Voltar para Tarefas</a>
+    </nav>
+  </header>
+
+  <section>
+    <form action="/tarefas/<%= tarefa.id %>?_method=PUT" method="POST">
+      <label for="title">Título:</label>
+      <input type="text" id="title" name="title" value="<%= tarefa.title %>" required>
+
+      <label for="description">Descrição:</label>
+      <textarea id="description" name="description" required><%= tarefa.description %></textarea>
+
+      <label for="due_date">Data de Entrega:</label>
+      <input type="date" id="due_date" name="due_date" value="<%= tarefa.due_date.toISOString().split('T')[0] %>" required>
+
+      <label for="user_id">Responsável:</label>
+      <select id="user_id" name="user_id">
+        <% usuarios.forEach(usuario => { %>
+          <option value="<%= usuario.id %>" <% if (usuario.id === tarefa.user_id) { %>selected<% } %>><%= usuario.name %></option>
+        <% }) %>
+      </select>
+
+      <label for="completed">Status:</label>
+      <select id="completed" name="completed">
+        <option value="false" <%= !tarefa.completed ? 'selected' : '' %>>Pendente</option>
+        <option value="true" <%= tarefa.completed ? 'selected' : '' %>>Concluída</option>
+      </select>
+
+      <button type="submit">Salvar Alterações</button>
+    </form>
+  </section>
+</body>
+<%- include('partials/footer') %>
+</html>

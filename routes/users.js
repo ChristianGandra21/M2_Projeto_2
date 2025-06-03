@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const controller = require('../controllers/userController');
+const userController = require('../controllers/userController');
 
-router.post('/', controller.create);
+// Corrigido: garantir que está chamando userController.store
+router.post('/users', userController.store);
 
 module.exports = router;

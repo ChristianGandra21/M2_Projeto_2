@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Nova Tarefa</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<header><%- include('partials/header') %></header>
+<body>
+  <h1>🆕 Criar Nova Tarefa</h1>
+  <nav>
+    <a href="/">⬅️ Voltar para Tarefas</a>
+  </nav>
+
+  <form id="new-task-form">
+    <label>Título: <input type="text" name="title" required></label><br>
+    <label>Descrição: <textarea name="description"></textarea></label><br>
+    <label>Data de Entrega: <input type="date" name="due_date" required></label><br>
+    <label>Usuário:
+      <select name="user_id" id="user-select"></select>
+    </label><br>
+    <button type="submit">💾 Salvar</button>
+  </form>
+
+  <script>
+    const userSelect = document.getElementById('user-select');
+
+    fetch('/api/users')
+      .then(res => res.json())
+      .then(users => {
+        users.forEach(user => {
+          const option = document.createElement('option');
+          option.value = user.id;
+          option.textContent = user.name;
+          userSelect.appendChild(option);
+        });
+      });
+
+    document.getElementById('new-task-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const data = {
+        title: form.title.value,
+        description: form.description.value,
+        due_date: form.due_date.value,
+        user_id: form.user_id.value
+      };
+      await fetch('/api/tasks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      window.location.href = '/';
+    });
+  </script>
+  <%- include('partials/footer') %>
+</body>
+</html>
