@@ -1,25 +1,195 @@
 <!DOCTYPE html>
-<html lang="pt-br">
-<head>
-  <meta charset="UTF-8">
-  <title>Novo Usuário</title>
-  <link rel="stylesheet" href="/css/styles.css">
-</head>
-<header><%- include('partials/header') %></header>
-<body>
-  <h1>➕ Criar Novo Usuário</h1>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title || 'Novo Usuário' %></title>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>👤 Criar Novo Usuário</h1>
+        <nav>
+          <a href="/users" class="btn btn-secondary">⬅️ Voltar para Lista</a>
+          <a href="/tasks/new" class="btn btn-primary">📋 Nova Tarefa</a>
+        </nav>
+      </header>
 
-  <form action="/api/users" method="POST">
-    <label for="name">Nome:</label>
-    <input type="text" name="name" id="name" required>
+      <main>
+        <div class="card">
+          <div class="form-header">
+            <h2>👤 Dados do Novo Usuário</h2>
+            <p>Preencha os campos abaixo para criar um novo usuário</p>
+          </div>
 
-    <label for="email">Email:</label>
-    <input type="email" name="email" id="email" required>
+          <form action="/users" method="POST" class="form">
+            <div class="form-group">
+              <label for="name" class="form-label">
+                <span class="label-text">👤 Nome Completo *</span>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  class="form-control"
+                  placeholder="Ex: João Silva"
+                  required
+                  maxlength="100"
+                />
+              </label>
+              <small class="form-help"
+                >Nome obrigatório (máximo 100 caracteres)</small
+              >
+            </div>
 
-    <button type="submit">Cadastrar</button>
-  </form>
+            <div class="form-group">
+              <label for="email" class="form-label">
+                <span class="label-text">📧 Email *</span>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  class="form-control"
+                  placeholder="Ex: joao@exemplo.com"
+                  required
+                  maxlength="150"
+                />
+              </label>
+              <small class="form-help"
+                >Email válido obrigatório (máximo 150 caracteres)</small
+              >
+            </div>
 
-  <a href="/usuarios">⬅️ Voltar para a Lista</a>
-</body>
-<%- include('partials/footer') %>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-success btn-large">
+                💾 Criar Usuário
+              </button>
+              <a href="/users" class="btn btn-secondary btn-large">
+                ❌ Cancelar
+              </a>
+            </div>
+          </form>
+        </div>
+
+        <!-- Dicas -->
+        <div class="card">
+          <h3>💡 Dicas</h3>
+          <ul class="tips-list">
+            <li>👤 Use o nome completo do usuário</li>
+            <li>📧 Certifique-se de que o email está correto</li>
+            <li>🔒 O email deve ser único no sistema</li>
+            <li>📋 Após criar, você pode atribuir tarefas ao usuário</li>
+            <li>✏️ Você pode editar os dados depois de criado</li>
+          </ul>
+        </div>
+
+        <!-- Preview -->
+        <div class="card">
+          <h3>👁️ Preview do Usuário</h3>
+          <div class="user-preview">
+            <div class="user-card preview">
+              <div class="user-avatar">
+                <span class="avatar-text" id="preview-avatar">?</span>
+              </div>
+              <div class="user-info">
+                <h3 class="user-name" id="preview-name">Nome do usuário</h3>
+                <p class="user-email" id="preview-email">
+                  📧 email@exemplo.com
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      // Validação do formulário
+      document.querySelector("form").addEventListener("submit", function (e) {
+        const name = document.getElementById("name").value.trim();
+        const email = document.getElementById("email").value.trim();
+
+        if (!name) {
+          e.preventDefault();
+          alert("⚠️ O nome é obrigatório!");
+          document.getElementById("name").focus();
+          return false;
+        }
+
+        if (name.length > 100) {
+          e.preventDefault();
+          alert("⚠️ O nome deve ter no máximo 100 caracteres!");
+          document.getElementById("name").focus();
+          return false;
+        }
+
+        if (!email) {
+          e.preventDefault();
+          alert("⚠️ O email é obrigatório!");
+          document.getElementById("email").focus();
+          return false;
+        }
+
+        // Validação básica de email
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+          e.preventDefault();
+          alert("⚠️ Por favor, insira um email válido!");
+          document.getElementById("email").focus();
+          return false;
+        }
+
+        if (email.length > 150) {
+          e.preventDefault();
+          alert("⚠️ O email deve ter no máximo 150 caracteres!");
+          document.getElementById("email").focus();
+          return false;
+        }
+      });
+
+      // Preview em tempo real
+      const nameInput = document.getElementById("name");
+      const emailInput = document.getElementById("email");
+      const previewAvatar = document.getElementById("preview-avatar");
+      const previewName = document.getElementById("preview-name");
+      const previewEmail = document.getElementById("preview-email");
+
+      function updatePreview() {
+        const name = nameInput.value.trim() || "Nome do usuário";
+        const email = emailInput.value.trim() || "email@exemplo.com";
+
+        previewAvatar.textContent = name.charAt(0).toUpperCase() || "?";
+        previewName.textContent = name;
+        previewEmail.textContent = `📧 ${email}`;
+      }
+
+      nameInput.addEventListener("input", updatePreview);
+      emailInput.addEventListener("input", updatePreview);
+
+      // Contador de caracteres
+      nameInput.addEventListener("input", function () {
+        const remaining = 100 - this.value.length;
+        const help = this.parentNode.nextElementSibling;
+        help.textContent = `Nome obrigatório (${remaining} caracteres restantes)`;
+
+        if (remaining < 10) {
+          help.style.color = "#e74c3c";
+        } else {
+          help.style.color = "#666";
+        }
+      });
+
+      emailInput.addEventListener("input", function () {
+        const remaining = 150 - this.value.length;
+        const help = this.parentNode.nextElementSibling;
+        help.textContent = `Email válido obrigatório (${remaining} caracteres restantes)`;
+
+        if (remaining < 20) {
+          help.style.color = "#e74c3c";
+        } else {
+          help.style.color = "#666";
+        }
+      });
+    </script>
+  </body>
 </html>

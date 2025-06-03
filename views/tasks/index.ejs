@@ -1,86 +1,189 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <title>Gerenciador de Tarefas</title>
-</head>
-<body>
-  <h1>Cadastro de Tarefas</h1>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title || 'Gerenciador de Tarefas' %></title>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>🏠 Gerenciador de Tarefas - Página Principal</h1>
+        <nav>
+          <a href="/tasks/new" class="btn btn-primary">➕ Nova Tarefa</a>
+          <a href="/users/new" class="btn btn-success">👤 Novo Usuário</a>
+        </nav>
+      </header>
 
-  <form action="/tasks" method="POST">
-    <div>
-      <label>Título: <input name="title" placeholder="Título" required></label>
-    </div>
-    
-    <div>
-      <label>Descrição: <input name="description" placeholder="Descrição"></label>
-    </div>
-
-    <div>
-      <label>Responsável:
-        <select name="user_id">
-          <option value="">Atribuir a um usuário</option>
-          <% users.forEach(user => { %>
-            <option value="<%= user.id %>"><%= user.name %></option>
-          <% }) %>
-        </select>
-      </label>
-    </div>
-
-    <div>
-      <label>Data de vencimento: <input type="date" name="due_date"></label>
-    </div>
-
-    <div>
-      <button type="submit">Adicionar Tarefa</button>
-    </div>
-  </form>
-
-  <hr>
-
-  <h2>Cadastrar novo usuário</h2>
-
-  <form action="/users" method="POST">
-    <div>
-      <label>Nome: <input name="name" placeholder="Nome" required></label>
-    </div>
-    <div>
-      <label>Email: <input name="email" placeholder="Email" required></label>
-    </div>
-    <div>
-      <button type="submit">Adicionar Usuário</button>
-    </div>
-  </form>
-
-  <hr>
-
-  <h2>Lista de Tarefas</h2>
-  <ul>
-    <% tasks.forEach(task => { %>
-      <li>
-        <strong><%= task.title %></strong> — <%= task.description || 'Sem descrição' %><br>
-        <small>
-          Responsável: <%= task.user || 'Sem usuário' %> | 
-          Vencimento: <%= task.due_date ? task.due_date.toISOString().split('T')[0] : 'Sem data' %> |
-          Concluída: <%= task.completed ? 'Sim' : 'Não' %>
-        </small>
-
-        <form action="/tasks/edit/<%= task.id %>" method="POST" style="margin-top: 5px;">
-          <div>
-            <input name="title" placeholder="Novo título" required>
-            <input name="description" placeholder="Nova descrição">
-            <input type="date" name="due_date" value="<%= task.due_date ? task.due_date.toISOString().split('T')[0] : 'Sem data' %>">
-            <label><input type="checkbox" name="completed" value="true"> Concluído</label>
-            <button type="submit">Editar</button>
+      <main>
+        <!-- Seção de Tarefas -->
+        <div class="card">
+          <div class="section-header">
+            <h2>📋 Lista de Tarefas</h2>
+            <a href="/tasks/new" class="btn btn-primary">➕ Criar Tarefa</a>
           </div>
-        </form>
 
-        <form action="/tasks/delete/<%= task.id %>" method="POST" style="margin-top: 2px;">
-          <button type="submit">Apagar</button>
-        </form>
-        <hr>
-      </li>
-    <% }) %>
-  </ul>
-</body>
+          <% if (tasks.length === 0) { %>
+          <div class="alert alert-info">
+            <p>
+              Nenhuma tarefa cadastrada.
+              <a href="/tasks/new">Criar primeira tarefa</a>
+            </p>
+          </div>
+          <% } else { %>
+          <div class="task-grid">
+            <% tasks.forEach(task => { %>
+            <div class="task-card <%= task.completed ? 'completed' : '' %>">
+              <div class="task-header">
+                <h3 class="task-title"><%= task.title %></h3>
+                <span
+                  class="task-status <%= task.completed ? 'status-completed' : 'status-pending' %>"
+                >
+                  <%= task.completed ? '✅ Concluída' : '⏳ Pendente' %>
+                </span>
+              </div>
+
+              <div class="task-body">
+                <p class="task-description">
+                  <%= task.description || 'Sem descrição' %>
+                </p>
+
+                <div class="task-meta">
+                  <% if (task.user) { %>
+                  <span class="task-user">👤 <%= task.user %></span>
+                  <% } %> <% if (task.due_date) { %>
+                  <span class="task-date"
+                    >📅 <%= new Date(task.due_date).toLocaleDateString('pt-BR')
+                    %></span
+                  >
+                  <% } %>
+                </div>
+              </div>
+
+              <div class="task-actions">
+                <a
+                  href="/tasks/edit/<%= task.id %>"
+                  class="btn btn-sm btn-secondary"
+                  >✏️ Editar</a
+                >
+                <form
+                  action="/tasks/toggle/<%= task.id %>"
+                  method="POST"
+                  style="display: inline"
+                >
+                  <button
+                    type="submit"
+                    class="btn btn-sm <%= task.completed ? 'btn-warning' : 'btn-success' %>"
+                  >
+                    <%= task.completed ? '↩️ Reabrir' : '✅ Concluir' %>
+                  </button>
+                </form>
+                <form
+                  action="/tasks/delete/<%= task.id %>"
+                  method="POST"
+                  style="display: inline"
+                  onsubmit="return confirm('Tem certeza que deseja excluir esta tarefa?')"
+                >
+                  <button type="submit" class="btn btn-sm btn-danger">
+                    🗑️ Excluir
+                  </button>
+                </form>
+              </div>
+            </div>
+            <% }) %>
+          </div>
+          <% } %>
+        </div>
+
+        <!-- Seção de Usuários -->
+        <div class="card">
+          <div class="section-header">
+            <h2>👥 Lista de Usuários</h2>
+            <a href="/users/new" class="btn btn-success">👤 Criar Usuário</a>
+          </div>
+
+          <% if (users.length === 0) { %>
+          <div class="alert alert-info">
+            <p>
+              Nenhum usuário cadastrado.
+              <a href="/users/new">Criar primeiro usuário</a>
+            </p>
+          </div>
+          <% } else { %>
+          <div class="users-grid">
+            <% users.forEach(user => { %>
+            <div class="user-card">
+              <div class="user-avatar">
+                <span class="avatar-text"
+                  ><%= user.name.charAt(0).toUpperCase() %></span
+                >
+              </div>
+
+              <div class="user-info">
+                <h3 class="user-name"><%= user.name %></h3>
+                <p class="user-email">📧 <%= user.email %></p>
+                <p class="user-id">🆔 ID: <%= user.id %></p>
+                <% if (user.created_at) { %>
+                <p class="user-date">
+                  📅 <%= new Date(user.created_at).toLocaleDateString('pt-BR')
+                  %>
+                </p>
+                <% } %>
+              </div>
+
+              <div class="user-actions">
+                <a
+                  href="/users/edit/<%= user.id %>"
+                  class="btn btn-sm btn-secondary"
+                  >✏️ Editar</a
+                >
+                <form
+                  action="/users/delete/<%= user.id %>"
+                  method="POST"
+                  style="display: inline"
+                  onsubmit="return confirm('Tem certeza que deseja excluir este usuário?')"
+                >
+                  <button type="submit" class="btn btn-sm btn-danger">
+                    🗑️ Excluir
+                  </button>
+                </form>
+              </div>
+            </div>
+            <% }) %>
+          </div>
+          <% } %>
+        </div>
+
+        <!-- Estatísticas -->
+        <div class="card">
+          <h3>📊 Estatísticas</h3>
+          <div class="stats-grid">
+            <div class="stat-item">
+              <span class="stat-number"><%= tasks.length %></span>
+              <span class="stat-label">Total de Tarefas</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number"
+                ><%= tasks.filter(t => t.completed).length %></span
+              >
+              <span class="stat-label">Concluídas</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number"
+                ><%= tasks.filter(t => !t.completed).length %></span
+              >
+              <span class="stat-label">Pendentes</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number"><%= users.length %></span>
+              <span class="stat-label">Usuários</span>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="/js/app.js"></script>
+  </body>
 </html>

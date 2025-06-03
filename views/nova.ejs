@@ -1,58 +1,157 @@
 <!DOCTYPE html>
-<html lang="pt-br">
-<head>
-  <meta charset="UTF-8">
-  <title>Nova Tarefa</title>
-  <link rel="stylesheet" href="/css/styles.css">
-</head>
-<header><%- include('partials/header') %></header>
-<body>
-  <h1>🆕 Criar Nova Tarefa</h1>
-  <nav>
-    <a href="/">⬅️ Voltar para Tarefas</a>
-  </nav>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title || 'Nova Tarefa' %></title>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>➕ Criar Nova Tarefa</h1>
+        <nav>
+          <a href="/tasks" class="btn btn-secondary">⬅️ Voltar para Lista</a>
+          <a href="/users/new" class="btn btn-success">👤 Novo Usuário</a>
+        </nav>
+      </header>
 
-  <form id="new-task-form">
-    <label>Título: <input type="text" name="title" required></label><br>
-    <label>Descrição: <textarea name="description"></textarea></label><br>
-    <label>Data de Entrega: <input type="date" name="due_date" required></label><br>
-    <label>Usuário:
-      <select name="user_id" id="user-select"></select>
-    </label><br>
-    <button type="submit">💾 Salvar</button>
-  </form>
+      <main>
+        <div class="card">
+          <div class="form-header">
+            <h2>📝 Dados da Nova Tarefa</h2>
+            <p>Preencha os campos abaixo para criar uma nova tarefa</p>
+          </div>
 
-  <script>
-    const userSelect = document.getElementById('user-select');
+          <form action="/tasks" method="POST" class="form">
+            <div class="form-group">
+              <label for="title" class="form-label">
+                <span class="label-text">📋 Título da Tarefa *</span>
+                <input
+                  type="text"
+                  id="title"
+                  name="title"
+                  class="form-control"
+                  placeholder="Ex: Finalizar relatório mensal"
+                  required
+                  maxlength="100"
+                />
+              </label>
+              <small class="form-help"
+                >Título obrigatório (máximo 100 caracteres)</small
+              >
+            </div>
 
-    fetch('/api/users')
-      .then(res => res.json())
-      .then(users => {
-        users.forEach(user => {
-          const option = document.createElement('option');
-          option.value = user.id;
-          option.textContent = user.name;
-          userSelect.appendChild(option);
-        });
+            <div class="form-group">
+              <label for="description" class="form-label">
+                <span class="label-text">📄 Descrição</span>
+                <textarea
+                  id="description"
+                  name="description"
+                  class="form-control"
+                  rows="4"
+                  placeholder="Descreva os detalhes da tarefa..."
+                  maxlength="500"
+                ></textarea>
+              </label>
+              <small class="form-help"
+                >Descrição opcional (máximo 500 caracteres)</small
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="user_id" class="form-label">
+                <span class="label-text">👤 Responsável</span>
+                <select id="user_id" name="user_id" class="form-control">
+                  <option value="">Selecione um usuário responsável</option>
+                  <% users.forEach(user => { %>
+                  <option value="<%= user.id %>">
+                    <%= user.name %> (<%= user.email %>)
+                  </option>
+                  <% }) %>
+                </select>
+              </label>
+              <small class="form-help">
+                Usuário responsável pela tarefa. <% if (users.length === 0) { %>
+                <a href="/users/new" class="link">Criar primeiro usuário</a>
+                <% } %>
+              </small>
+            </div>
+
+            <div class="form-group">
+              <label for="due_date" class="form-label">
+                <span class="label-text">📅 Data de Vencimento</span>
+                <input
+                  type="date"
+                  id="due_date"
+                  name="due_date"
+                  class="form-control"
+                  min="<%= new Date().toISOString().split('T')[0] %>"
+                />
+              </label>
+              <small class="form-help"
+                >Data limite para conclusão da tarefa</small
+              >
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary btn-large">
+                💾 Criar Tarefa
+              </button>
+              <a href="/tasks" class="btn btn-secondary btn-large">
+                ❌ Cancelar
+              </a>
+            </div>
+          </form>
+        </div>
+
+        <!-- Dicas -->
+        <div class="card">
+          <h3>💡 Dicas</h3>
+          <ul class="tips-list">
+            <li>📋 Use títulos claros e objetivos</li>
+            <li>📄 Adicione detalhes na descrição para facilitar a execução</li>
+            <li>👤 Atribua a tarefa a um usuário responsável</li>
+            <li>📅 Defina uma data de vencimento realista</li>
+            <li>✅ Você pode marcar como concluída depois de criada</li>
+          </ul>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      // Validação do formulário
+      document.querySelector("form").addEventListener("submit", function (e) {
+        const title = document.getElementById("title").value.trim();
+
+        if (!title) {
+          e.preventDefault();
+          alert("⚠️ O título da tarefa é obrigatório!");
+          document.getElementById("title").focus();
+          return false;
+        }
+
+        if (title.length > 100) {
+          e.preventDefault();
+          alert("⚠️ O título deve ter no máximo 100 caracteres!");
+          document.getElementById("title").focus();
+          return false;
+        }
       });
 
-    document.getElementById('new-task-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const form = e.target;
-      const data = {
-        title: form.title.value,
-        description: form.description.value,
-        due_date: form.due_date.value,
-        user_id: form.user_id.value
-      };
-      await fetch('/api/tasks', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
+      // Contador de caracteres para descrição
+      const description = document.getElementById("description");
+      description.addEventListener("input", function () {
+        const remaining = 500 - this.value.length;
+        const help = this.parentNode.nextElementSibling;
+        help.textContent = `Descrição opcional (${remaining} caracteres restantes)`;
+
+        if (remaining < 50) {
+          help.style.color = "#e74c3c";
+        } else {
+          help.style.color = "#666";
+        }
       });
-      window.location.href = '/';
-    });
-  </script>
-  <%- include('partials/footer') %>
-</body>
+    </script>
+  </body>
 </html>

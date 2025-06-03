@@ -1,46 +1,284 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>✏️ Editar Tarefa</title>
-  <link rel="stylesheet" href="/css/styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title || 'Editar' %></title>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-  <header>
-    <%- include('partials/header') %>
-    <h1>✏️ Editar Tarefa</h1>
-    <nav>
-      <a href="/tarefas">📄 Voltar para Tarefas</a>
-    </nav>
-  </header>
+    <div class="container">
+        <header>
+            <% if (task) { %>
+                <h1>✏️ Editar Tarefa: <%= task.title %></h1>
+            <% } else if (user) { %>
+                <h1>✏️ Editar Usuário: <%= user.name %></h1>
+            <% } else { %>
+                <h1>✏️ Editar Item</h1>
+            <% } %>
+            <nav>
+                <a href="/tasks" class="btn btn-secondary">⬅️ Voltar para Lista</a>
+                <% if (task) { %>
+                    <a href="/tasks/new" class="btn btn-primary">➕ Nova Tarefa</a>
+                <% } else if (user) { %>
+                    <a href="/users/new" class="btn btn-success">👤 Novo Usuário</a>
+                <% } %>
+            </nav>
+        </header>
 
-  <section>
-    <form action="/tarefas/<%= tarefa.id %>?_method=PUT" method="POST">
-      <label for="title">Título:</label>
-      <input type="text" id="title" name="title" value="<%= tarefa.title %>" required>
+        <main>
+            <% if (task) { %>
+                <!-- Formulário de Edição de Tarefa -->
+                <div class="card">
+                    <div class="form-header">
+                        <h2>📝 Editar Dados da Tarefa</h2>
+                        <p>Modifique os campos abaixo para atualizar a tarefa</p>
+                    </div>
 
-      <label for="description">Descrição:</label>
-      <textarea id="description" name="description" required><%= tarefa.description %></textarea>
+                    <form action="/tasks/edit/<%= task.id %>" method="POST" class="form">
+                        <div class="form-group">
+                            <label for="title" class="form-label">
+                                <span class="label-text">📋 Título da Tarefa *</span>
+                                <input
+                                    type="text"
+                                    id="title"
+                                    name="title"
+                                    class="form-control"
+                                    value="<%= task.title %>"
+                                    placeholder="Ex: Finalizar relatório mensal"
+                                    required
+                                    maxlength="100"
+                                >
+                            </label>
+                            <small class="form-help">Título obrigatório (máximo 100 caracteres)</small>
+                        </div>
 
-      <label for="due_date">Data de Entrega:</label>
-      <input type="date" id="due_date" name="due_date" value="<%= tarefa.due_date.toISOString().split('T')[0] %>" required>
+                        <div class="form-group">
+                            <label for="description" class="form-label">
+                                <span class="label-text">📄 Descrição</span>
+                                <textarea
+                                    id="description"
+                                    name="description"
+                                    class="form-control"
+                                    rows="4"
+                                    placeholder="Descreva os detalhes da tarefa..."
+                                    maxlength="500"
+                                ><%= task.description || '' %></textarea>
+                            </label>
+                            <small class="form-help">Descrição opcional (máximo 500 caracteres)</small>
+                        </div>
 
-      <label for="user_id">Responsável:</label>
-      <select id="user_id" name="user_id">
-        <% usuarios.forEach(usuario => { %>
-          <option value="<%= usuario.id %>" <% if (usuario.id === tarefa.user_id) { %>selected<% } %>><%= usuario.name %></option>
-        <% }) %>
-      </select>
+                        <div class="form-group">
+                            <label for="user_id" class="form-label">
+                                <span class="label-text">👤 Responsável</span>
+                                <select id="user_id" name="user_id" class="form-control">
+                                    <option value="">Selecione um usuário responsável</option>
+                                    <% users.forEach(user => { %>
+                                        <option value="<%= user.id %>" <%= task.user_id === user.id ? 'selected' : '' %>>
+                                            <%= user.name %> (<%= user.email %>)
+                                        </option>
+                                    <% }) %>
+                                </select>
+                            </label>
+                            <small class="form-help">Usuário responsável pela tarefa</small>
+                        </div>
 
-      <label for="completed">Status:</label>
-      <select id="completed" name="completed">
-        <option value="false" <%= !tarefa.completed ? 'selected' : '' %>>Pendente</option>
-        <option value="true" <%= tarefa.completed ? 'selected' : '' %>>Concluída</option>
-      </select>
+                        <div class="form-group">
+                            <label for="due_date" class="form-label">
+                                <span class="label-text">📅 Data de Vencimento</span>
+                                <input
+                                    type="date"
+                                    id="due_date"
+                                    name="due_date"
+                                    class="form-control"
+                                    value="<%= task.due_date ? task.due_date.toISOString().split('T')[0] : '' %>"
+                                >
+                            </label>
+                            <small class="form-help">Data limite para conclusão da tarefa</small>
+                        </div>
 
-      <button type="submit">Salvar Alterações</button>
-    </form>
-  </section>
+                        <div class="form-group">
+                            <label for="completed" class="form-label checkbox-label">
+                                <input
+                                    type="checkbox"
+                                    id="completed"
+                                    name="completed"
+                                    value="true"
+                                    <%= task.completed ? 'checked' : '' %>
+                                >
+                                <span class="label-text">✅ Tarefa Concluída</span>
+                            </label>
+                            <small class="form-help">Marque se a tarefa foi finalizada</small>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary btn-large">
+                                💾 Salvar Alterações
+                            </button>
+                            <a href="/tasks" class="btn btn-secondary btn-large">
+                                ❌ Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            <% } else if (user) { %>
+                <!-- Formulário de Edição de Usuário -->
+                <div class="card">
+                    <div class="form-header">
+                        <h2>👤 Editar Dados do Usuário</h2>
+                        <p>Modifique os campos abaixo para atualizar o usuário</p>
+                    </div>
+
+                    <form action="/users/edit/<%= user.id %>" method="POST" class="form">
+                        <div class="form-group">
+                            <label for="name" class="form-label">
+                                <span class="label-text">👤 Nome Completo *</span>
+                                <input
+                                    type="text"
+                                    id="name"
+                                    name="name"
+                                    class="form-control"
+                                    value="<%= user.name %>"
+                                    placeholder="Ex: João Silva"
+                                    required
+                                    maxlength="100"
+                                >
+                            </label>
+                            <small class="form-help">Nome obrigatório (máximo 100 caracteres)</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email" class="form-label">
+                                <span class="label-text">📧 Email *</span>
+                                <input
+                                    type="email"
+                                    id="email"
+                                    name="email"
+                                    class="form-control"
+                                    value="<%= user.email %>"
+                                    placeholder="Ex: joao@exemplo.com"
+                                    required
+                                    maxlength="150"
+                                >
+                            </label>
+                            <small class="form-help">Email válido obrigatório (máximo 150 caracteres)</small>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-success btn-large">
+                                💾 Salvar Alterações
+                            </button>
+                            <a href="/users" class="btn btn-secondary btn-large">
+                                ❌ Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            <% } %>
+
+            <!-- Informações do Item -->
+            <div class="card">
+                <h3>ℹ️ Informações</h3>
+                <% if (task) { %>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-label">🆔 ID da Tarefa:</span>
+                            <span class="info-value"><%= task.id %></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">📊 Status:</span>
+                            <span class="info-value <%= task.completed ? 'status-completed' : 'status-pending' %>">
+                                <%= task.completed ? '✅ Concluída' : '⏳ Pendente' %>
+                            </span>
+                        </div>
+                        <% if (task.created_at) { %>
+                            <div class="info-item">
+                                <span class="info-label">📅 Criada em:</span>
+                                <span class="info-value"><%= new Date(task.created_at).toLocaleDateString('pt-BR') %></span>
+                            </div>
+                        <% } %>
+                    </div>
+                <% } else if (user) { %>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-label">🆔 ID do Usuário:</span>
+                            <span class="info-value"><%= user.id %></span>
+                        </div>
+                        <% if (user.created_at) { %>
+                            <div class="info-item">
+                                <span class="info-label">📅 Cadastrado em:</span>
+                                <span class="info-value"><%= new Date(user.created_at).toLocaleDateString('pt-BR') %></span>
+                            </div>
+                        <% } %>
+                    </div>
+                <% } %>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Validação do formulário
+        document.querySelector('form').addEventListener('submit', function(e) {
+            <% if (task) { %>
+                const title = document.getElementById('title').value.trim();
+
+                if (!title) {
+                    e.preventDefault();
+                    alert('⚠️ O título da tarefa é obrigatório!');
+                    document.getElementById('title').focus();
+                    return false;
+                }
+
+                if (title.length > 100) {
+                    e.preventDefault();
+                    alert('⚠️ O título deve ter no máximo 100 caracteres!');
+                    document.getElementById('title').focus();
+                    return false;
+                }
+            <% } else if (user) { %>
+                const name = document.getElementById('name').value.trim();
+                const email = document.getElementById('email').value.trim();
+
+                if (!name) {
+                    e.preventDefault();
+                    alert('⚠️ O nome é obrigatório!');
+                    document.getElementById('name').focus();
+                    return false;
+                }
+
+                if (!email) {
+                    e.preventDefault();
+                    alert('⚠️ O email é obrigatório!');
+                    document.getElementById('email').focus();
+                    return false;
+                }
+
+                // Validação básica de email
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    e.preventDefault();
+                    alert('⚠️ Por favor, insira um email válido!');
+                    document.getElementById('email').focus();
+                    return false;
+                }
+            <% } %>
+        });
+
+        <% if (task) { %>
+            // Contador de caracteres para descrição
+            const description = document.getElementById('description');
+            description.addEventListener('input', function() {
+                const remaining = 500 - this.value.length;
+                const help = this.parentNode.nextElementSibling;
+                help.textContent = `Descrição opcional (${remaining} caracteres restantes)`;
+
+                if (remaining < 50) {
+                    help.style.color = '#e74c3c';
+                } else {
+                    help.style.color = '#666';
+                }
+            });
+        <% } %>
+    </script>
 </body>
-<%- include('partials/footer') %>
 </html>
