@@ -9,25 +9,25 @@
 <body>
     <div class="container">
         <header>
-            <% if (task) { %>
+            <% if (typeof task !== 'undefined' && task) { %>
                 <h1>✏️ Editar Tarefa: <%= task.title %></h1>
-            <% } else if (user) { %>
+            <% } else if (typeof user !== 'undefined' && user) { %>
                 <h1>✏️ Editar Usuário: <%= user.name %></h1>
             <% } else { %>
                 <h1>✏️ Editar Item</h1>
             <% } %>
             <nav>
                 <a href="/tasks" class="btn btn-secondary">⬅️ Voltar para Lista</a>
-                <% if (task) { %>
+                <% if (typeof task !== 'undefined' && task) { %>
                     <a href="/tasks/new" class="btn btn-primary">➕ Nova Tarefa</a>
-                <% } else if (user) { %>
+                <% } else if (typeof user !== 'undefined' && user) { %>
                     <a href="/users/new" class="btn btn-success">👤 Novo Usuário</a>
                 <% } %>
             </nav>
         </header>
 
         <main>
-            <% if (task) { %>
+            <% if (typeof task !== 'undefined' && task) { %>
                 <!-- Formulário de Edição de Tarefa -->
                 <div class="card">
                     <div class="form-header">
@@ -121,7 +121,7 @@
                         </div>
                     </form>
                 </div>
-            <% } else if (user) { %>
+            <% } else if (typeof user !== 'undefined' && user) { %>
                 <!-- Formulário de Edição de Usuário -->
                 <div class="card">
                     <div class="form-header">
@@ -179,7 +179,7 @@
             <!-- Informações do Item -->
             <div class="card">
                 <h3>ℹ️ Informações</h3>
-                <% if (task) { %>
+                <% if (typeof task !== 'undefined' && task) { %>
                     <div class="info-grid">
                         <div class="info-item">
                             <span class="info-label">🆔 ID da Tarefa:</span>
@@ -198,7 +198,7 @@
                             </div>
                         <% } %>
                     </div>
-                <% } else if (user) { %>
+                <% } else if (typeof user !== 'undefined' && user) { %>
                     <div class="info-grid">
                         <div class="info-item">
                             <span class="info-label">🆔 ID do Usuário:</span>
@@ -219,37 +219,44 @@
     <script>
         // Validação do formulário
         document.querySelector('form').addEventListener('submit', function(e) {
-            if (task) { 
-                const title = document.getElementById('title').value.trim();
+            // Verificar se é formulário de tarefa
+            const titleField = document.getElementById('title');
+            if (titleField) {
+                const title = titleField.value.trim();
 
                 if (!title) {
                     e.preventDefault();
                     alert('⚠️ O título da tarefa é obrigatório!');
-                    document.getElementById('title').focus();
+                    titleField.focus();
                     return false;
                 }
 
                 if (title.length > 100) {
                     e.preventDefault();
                     alert('⚠️ O título deve ter no máximo 100 caracteres!');
-                    document.getElementById('title').focus();
+                    titleField.focus();
                     return false;
                 }
-            } else if (user) {
-                const name = document.getElementById('name').value.trim();
-                const email = document.getElementById('email').value.trim();
+            }
+
+            // Verificar se é formulário de usuário
+            const nameField = document.getElementById('name');
+            const emailField = document.getElementById('email');
+            if (nameField && emailField) {
+                const name = nameField.value.trim();
+                const email = emailField.value.trim();
 
                 if (!name) {
                     e.preventDefault();
                     alert('⚠️ O nome é obrigatório!');
-                    document.getElementById('name').focus();
+                    nameField.focus();
                     return false;
                 }
 
                 if (!email) {
                     e.preventDefault();
                     alert('⚠️ O email é obrigatório!');
-                    document.getElementById('email').focus();
+                    emailField.focus();
                     return false;
                 }
 
@@ -258,15 +265,15 @@
                 if (!emailRegex.test(email)) {
                     e.preventDefault();
                     alert('⚠️ Por favor, insira um email válido!');
-                    document.getElementById('email').focus();
+                    emailField.focus();
                     return false;
                 }
             }
         });
 
-        if (task) {
-            // Contador de caracteres para descrição
-            const description = document.getElementById('description');
+        // Contador de caracteres para descrição (apenas se existir)
+        const description = document.getElementById('description');
+        if (description) {
             description.addEventListener('input', function() {
                 const remaining = 500 - this.value.length;
                 const help = this.parentNode.nextElementSibling;

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmar Exclusão - <%= user.name %></title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚠️ Confirmar Exclusão de Usuário</h1>
+            <nav>
+                <a href="/users" class="btn btn-secondary">⬅️ Voltar para Lista</a>
+                <a href="/users/edit/<%= user.id %>" class="btn btn-primary">✏️ Editar Usuário</a>
+            </nav>
+        </header>
+
+        <main>
+            <!-- Informações do Usuário -->
+            <div class="card">
+                <div class="warning-header">
+                    <h2>🚨 Atenção: Exclusão Permanente</h2>
+                    <p>Você está prestes a excluir permanentemente o seguinte usuário:</p>
+                </div>
+
+                <div class="user-details">
+                    <div class="user-avatar-large">
+                        <span class="avatar-text-large">
+                            <%= user.name.charAt(0).toUpperCase() %>
+                        </span>
+                    </div>
+
+                    <div class="user-info-detailed">
+                        <h3 class="user-name-large">👤 <%= user.name %></h3>
+                        <p class="user-email-large">📧 <%= user.email %></p>
+                        <p class="user-id-large">🆔 ID: <%= user.id %></p>
+                        <% if (user.created_at) { %>
+                        <p class="user-date-large">
+                            📅 Criado em: <%= new Date(user.created_at).toLocaleDateString('pt-BR') %>
+                        </p>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Verificação de Tarefas -->
+            <div class="card">
+                <h3>🔍 Verificação de Dependências</h3>
+                <div id="tasks-check">
+                    <% if (taskStats.total > 0) { %>
+                        <div class="alert alert-warning">
+                            <h4>⚠️ <%= taskStats.total %> Tarefa(s) Encontrada(s)</h4>
+                            <div class="task-stats">
+                                <span class="stat-item">
+                                    <span class="stat-number completed"><%= taskStats.completed %></span>
+                                    <span class="stat-label">Concluídas</span>
+                                </span>
+                                <span class="stat-item">
+                                    <span class="stat-number pending"><%= taskStats.pending %></span>
+                                    <span class="stat-label">Pendentes</span>
+                                </span>
+                            </div>
+                            <p>Este usuário possui as seguintes tarefas associadas:</p>
+                            <ul class="tasks-list">
+                                <% userTasks.forEach(task => { %>
+                                <li>
+                                    <strong><%= task.title %></strong>
+                                    <% if (task.completed) { %>
+                                        <span class="badge badge-success">✅ Concluída</span>
+                                    <% } else { %>
+                                        <span class="badge badge-warning">⏳ Pendente</span>
+                                    <% } %>
+                                    <% if (task.due_date) { %>
+                                        <small class="task-date">📅 <%= new Date(task.due_date).toLocaleDateString('pt-BR') %></small>
+                                    <% } %>
+                                </li>
+                                <% }) %>
+                            </ul>
+                        </div>
+                    <% } else { %>
+                        <div class="alert alert-success">
+                            <h4>✅ Nenhuma Tarefa Encontrada</h4>
+                            <p>Este usuário não possui tarefas associadas. A exclusão pode prosseguir com segurança.</p>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+
+            <!-- Ações de Confirmação -->
+            <div class="card">
+                <div class="confirmation-actions">
+                    <div class="warning-message">
+                        <h3>⚠️ Esta ação não pode ser desfeita!</h3>
+                        <p>Ao confirmar, o usuário será permanentemente removido do sistema.</p>
+                    </div>
+
+                    <% if (taskStats.total > 0) { %>
+                        <!-- Usuário tem tarefas - mostrar opções -->
+                        <div class="blocked-message">
+                            <div class="alert alert-danger">
+                                <h4>❌ Exclusão Bloqueada</h4>
+                                <p>Este usuário não pode ser excluído porque possui <strong><%= taskStats.total %> tarefa(s)</strong> associada(s).</p>
+                                <p><strong>Opções disponíveis:</strong></p>
+                                <ul>
+                                    <li>Remover todas as tarefas do usuário</li>
+                                    <li>Reatribuir as tarefas para outro usuário</li>
+                                    <li>Solicitar exclusão forçada (administrador)</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="blocked-actions">
+                                <a href="/tasks" class="btn btn-primary">📋 Gerenciar Tarefas</a>
+                                <a href="/users" class="btn btn-secondary">⬅️ Voltar</a>
+                                
+                                <!-- Botão de exclusão forçada (apenas para demonstração) -->
+                                <div class="force-delete-section">
+                                    <h5>🔐 Exclusão Forçada (Administrador)</h5>
+                                    <p class="warning-text">⚠️ Esta opção remove o usuário E todas as suas tarefas!</p>
+                                    <form action="/users/delete/<%= user.id %>?force=true" method="POST" id="force-delete-form">
+                                        <button type="submit" class="btn btn-danger btn-large" id="force-delete-btn">
+                                            💥 Forçar Exclusão (Admin)
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    <% } else { %>
+                        <!-- Usuário não tem tarefas - permitir exclusão -->
+                        <div class="action-buttons">
+                            <form action="/users/delete/<%= user.id %>" method="POST" id="delete-form">
+                                <button type="submit" class="btn btn-danger btn-large" id="confirm-delete">
+                                    🗑️ Confirmar Exclusão
+                                </button>
+                            </form>
+                            
+                            <a href="/users" class="btn btn-secondary btn-large">
+                                ❌ Cancelar
+                            </a>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Interceptar envio do formulário normal
+            const deleteForm = document.getElementById('delete-form');
+            if (deleteForm) {
+                deleteForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const confirmed = confirm(
+                        `🚨 CONFIRMAÇÃO FINAL\n\n` +
+                        `Tem ABSOLUTA CERTEZA que deseja excluir o usuário "<%= user.name %>"?\n\n` +
+                        `Esta ação é IRREVERSÍVEL!`
+                    );
+                    
+                    if (confirmed) {
+                        const button = document.getElementById('confirm-delete');
+                        button.disabled = true;
+                        button.innerHTML = '⏳ Excluindo...';
+                        this.submit();
+                    }
+                });
+            }
+
+            // Interceptar envio do formulário de exclusão forçada
+            const forceDeleteForm = document.getElementById('force-delete-form');
+            if (forceDeleteForm) {
+                forceDeleteForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const confirmed = confirm(
+                        `🚨 EXCLUSÃO FORÇADA - ATENÇÃO MÁXIMA!\n\n` +
+                        `Você está prestes a FORÇAR a exclusão do usuário "<%= user.name %>" e TODAS as suas <%= taskStats.total %> tarefa(s)!\n\n` +
+                        `Esta ação é EXTREMAMENTE PERIGOSA e IRREVERSÍVEL!\n\n` +
+                        `Tem ABSOLUTA CERTEZA?`
+                    );
+                    
+                    if (confirmed) {
+                        const secondConfirm = confirm(
+                            `⚠️ SEGUNDA CONFIRMAÇÃO OBRIGATÓRIA\n\n` +
+                            `Digite "CONFIRMO" na próxima tela para prosseguir com a exclusão forçada.`
+                        );
+                        
+                        if (secondConfirm) {
+                            const finalConfirm = prompt(
+                                `Digite exatamente "CONFIRMO" para prosseguir com a exclusão forçada:`
+                            );
+                            
+                            if (finalConfirm === "CONFIRMO") {
+                                const button = document.getElementById('force-delete-btn');
+                                button.disabled = true;
+                                button.innerHTML = '💥 Forçando Exclusão...';
+                                this.submit();
+                            } else {
+                                alert('❌ Exclusão cancelada. Texto de confirmação incorreto.');
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

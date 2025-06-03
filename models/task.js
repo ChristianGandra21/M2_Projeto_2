@@ -30,7 +30,7 @@ module.exports = {
 
   async findById(id) {
     const query = `
-      SELECT tasks.id, tasks.title, tasks.description, tasks.completed, tasks.due_date, tasks.user_id, tasks.created_at, users.name AS user
+      SELECT tasks.id, tasks.title, tasks.description, tasks.completed, tasks.due_date, tasks.user_id, users.name AS user
       FROM tasks
       LEFT JOIN users ON tasks.user_id = users.id
       WHERE tasks.id = $1

@@ -69,10 +69,30 @@ exports.apiIndex = async (req, res) => {
 exports.create = async (req, res) => {
   try {
     const { title, description, due_date, user_id } = req.body;
-    await Task.create({ title, description, due_date, user_id });
-    res.redirect("/tasks");
+
+    // Validações básicas
+    if (!title || title.trim().length === 0) {
+      return res.status(400).send("❌ Erro: O título da tarefa é obrigatório!");
+    }
+
+    const newTask = await Task.create({
+      title: title.trim(),
+      description: description ? description.trim() : null,
+      due_date,
+      user_id,
+    });
+
+    // Redirecionar com mensagem de sucesso
+    res.redirect(
+      "/tasks?success=task_created&title=" + encodeURIComponent(title.trim())
+    );
   } catch (err) {
-    res.status(400).send("Erro ao criar tarefa");
+    console.error("Erro ao criar tarefa:", err);
+    res
+      .status(500)
+      .send(
+        "❌ Erro interno: Não foi possível criar a tarefa. Tente novamente."
+      );
   }
 };
 
@@ -91,16 +111,51 @@ exports.update = async (req, res) => {
   try {
     const { id } = req.params;
     const { title, description, due_date, user_id, completed } = req.body;
-    await Task.update(id, {
-      title,
-      description,
-      due_date,
-      user_id,
-      completed: completed === "true" || completed === true,
+
+    // Validações básicas
+    if (!title || title.trim().length === 0) {
+      return res.status(400).send("❌ Erro: O título da tarefa é obrigatório!");
+    }
+
+    if (title.length > 100) {
+      return res
+        .status(400)
+        .send("❌ Erro: O título deve ter no máximo 100 caracteres!");
+    }
+
+    if (description && description.length > 500) {
+      return res
+        .status(400)
+        .send("❌ Erro: A descrição deve ter no máximo 500 caracteres!");
+    }
+
+    // Verificar se a tarefa existe
+    const existingTask = await Task.findById(id);
+    if (!existingTask) {
+      return res.status(404).send("❌ Erro: Tarefa não encontrada!");
+    }
+
+    // Atualizar tarefa
+    const updatedTask = await Task.update(id, {
+      title: title.trim(),
+      description: description ? description.trim() : null,
+      due_date: due_date || null,
+      user_id: user_id || null,
+      completed:
+        completed === "true" || completed === true || completed === "on",
     });
-    res.redirect("/tasks");
+
+    // Redirecionar com mensagem de sucesso
+    res.redirect(
+      "/tasks?success=task_updated&title=" + encodeURIComponent(title.trim())
+    );
   } catch (err) {
-    res.status(400).send("Erro ao atualizar tarefa");
+    console.error("Erro ao atualizar tarefa:", err);
+    res
+      .status(500)
+      .send(
+        "❌ Erro interno: Não foi possível atualizar a tarefa. Tente novamente."
+      );
   }
 };
 
@@ -124,10 +179,35 @@ exports.toggle = async (req, res) => {
 exports.destroy = async (req, res) => {
   try {
     const { id } = req.params;
-    await Task.delete(id);
-    res.redirect("/tasks");
+
+    // Verificar se a tarefa existe antes de excluir
+    const existingTask = await Task.findById(id);
+    if (!existingTask) {
+      return res.status(404).send("❌ Erro: Tarefa não encontrada!");
+    }
+
+    // Salvar título para mensagem de sucesso
+    const taskTitle = existingTask.title;
+
+    // Excluir tarefa
+    const deleted = await Task.delete(id);
+    if (!deleted) {
+      return res
+        .status(500)
+        .send("❌ Erro: Não foi possível excluir a tarefa. Tente novamente.");
+    }
+
+    // Redirecionar com mensagem de sucesso
+    res.redirect(
+      "/tasks?success=task_deleted&title=" + encodeURIComponent(taskTitle)
+    );
   } catch (err) {
-    res.status(400).send("Erro ao excluir tarefa");
+    console.error("Erro ao excluir tarefa:", err);
+    res
+      .status(500)
+      .send(
+        "❌ Erro interno: Não foi possível excluir a tarefa. Tente novamente."
+      );
   }
 };
 
@@ -216,7 +296,9 @@ exports.apiToggle = async (req, res) => {
     });
 
     res.json({
-      message: `Tarefa ${updatedTask.completed ? "concluída" : "reaberta"} com sucesso!`,
+      message: `Tarefa ${
+        updatedTask.completed ? "concluída" : "reaberta"
+      } com sucesso!`,
       task: updatedTask,
     });
   } catch (error) {

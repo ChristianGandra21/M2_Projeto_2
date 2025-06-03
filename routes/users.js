@@ -16,6 +16,9 @@ router.get("/new", userController.new);
 // Página de formulário para editar usuário
 router.get("/edit/:id", userController.edit);
 
+// Página de confirmação para excluir usuário
+router.get("/delete/:id", userController.confirmDelete);
+
 // ========== ACTIONS (processamento de formulários) ==========
 
 // Criar novo usuário (POST do formulário)
@@ -26,6 +29,9 @@ router.post("/edit/:id", userController.update);
 
 // Excluir usuário
 router.post("/delete/:id", userController.destroy);
+
+// Reatribuir tarefas de um usuário para outro
+router.post("/reassign-tasks", userController.reassignTasks);
 
 // ========== ROTAS DE API (retornam JSON para fetch()) ==========
 

@@ -17,6 +17,11 @@
       </header>
 
       <main>
+        <!-- Mensagens de Sucesso/Erro -->
+        <div id="messages-container">
+          <!-- As mensagens serão inseridas aqui via JavaScript -->
+        </div>
+
         <!-- Seção de Tarefas -->
         <div class="card">
           <div class="section-header">
@@ -37,7 +42,9 @@
             <div class="task-card <%= task.completed ? 'completed' : '' %>">
               <div class="task-header">
                 <h3 class="task-title"><%= task.title %></h3>
-                <span class="task-status <%= task.completed ? 'status-completed' : 'status-pending' %>">
+                <span
+                  class="task-status <%= task.completed ? 'status-completed' : 'status-pending' %>"
+                >
                   <%= task.completed ? '✅ Concluída' : '⏳ Pendente' %>
                 </span>
               </div>
@@ -49,17 +56,21 @@
                 <div class="task-meta">
                   <% if (task.user) { %>
                   <span class="task-user">👤 <%= task.user %></span>
-                  <% } %>
-                  <% if (task.due_date) { %>
+                  <% } %> <% if (task.due_date) { %>
                   <span class="task-date">
-                    📅 <%= new Date(task.due_date).toLocaleDateString('pt-BR') %>
+                    📅 <%= new Date(task.due_date).toLocaleDateString('pt-BR')
+                    %>
                   </span>
                   <% } %>
                 </div>
               </div>
 
               <div class="task-actions">
-                <a href="/tasks/edit/<%= task.id %>" class="btn btn-sm btn-secondary">✏️ Editar</a>
+                <a
+                  href="/tasks/edit/<%= task.id %>"
+                  class="btn btn-sm btn-secondary"
+                  >✏️ Editar</a
+                >
 
                 <button
                   type="button"
@@ -94,11 +105,15 @@
               <span class="stat-label">Total de Tarefas</span>
             </div>
             <div class="stat-item">
-              <span class="stat-number"><%= tasks.filter(t => t.completed).length %></span>
+              <span class="stat-number"
+                ><%= tasks.filter(t => t.completed).length %></span
+              >
               <span class="stat-label">Concluídas</span>
             </div>
             <div class="stat-item">
-              <span class="stat-number"><%= tasks.filter(t => !t.completed).length %></span>
+              <span class="stat-number"
+                ><%= tasks.filter(t => !t.completed).length %></span
+              >
               <span class="stat-label">Pendentes</span>
             </div>
             <div class="stat-item">
@@ -111,32 +126,149 @@
     </div>
 
     <script>
-      document.addEventListener('DOMContentLoaded', () => {
-        document.body.addEventListener('click', async (e) => {
-          const btn = e.target.closest('button[data-action]');
+      document.addEventListener("DOMContentLoaded", () => {
+        // Mostrar mensagens de sucesso/erro baseadas nos parâmetros da URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const success = urlParams.get("success");
+        const title = urlParams.get("title");
+        const name = urlParams.get("name");
+        const messagesContainer = document.getElementById("messages-container");
+
+        if (success && messagesContainer) {
+          let message = "";
+          let alertClass = "alert-success";
+
+          switch (success) {
+            case "task_updated":
+              message = `✅ Tarefa "${
+                title || "sem título"
+              }" foi atualizada com sucesso!`;
+              break;
+            case "task_deleted":
+              message = `✅ Tarefa "${
+                title || "sem título"
+              }" foi excluída com sucesso!`;
+              break;
+            case "user_updated":
+              message = `✅ Usuário "${
+                name || "sem nome"
+              }" foi atualizado com sucesso!`;
+              break;
+            case "user_deleted":
+              message = `✅ Usuário "${
+                name || "sem nome"
+              }" foi excluído com sucesso!`;
+              break;
+            case "task_created":
+              message = `✅ Tarefa "${
+                title || "sem título"
+              }" foi criada com sucesso!`;
+              break;
+            case "user_created":
+              message = `✅ Usuário "${
+                name || "sem nome"
+              }" foi criado com sucesso!`;
+              break;
+            default:
+              message = "✅ Operação realizada com sucesso!";
+          }
+
+          if (message) {
+            const alertDiv = document.createElement("div");
+            alertDiv.className = `alert ${alertClass}`;
+            alertDiv.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span>${message}</span>
+                        <button onclick="this.parentElement.parentElement.remove()" style="background: none; border: none; font-size: 18px; cursor: pointer; color: #155724;">×</button>
+                    </div>
+                `;
+            messagesContainer.appendChild(alertDiv);
+
+            // Auto-remover após 5 segundos
+            setTimeout(() => {
+              if (alertDiv.parentNode) {
+                alertDiv.remove();
+              }
+            }, 5000);
+
+            // Limpar URL sem recarregar a página
+            const newUrl = window.location.pathname;
+            window.history.replaceState({}, document.title, newUrl);
+          }
+        }
+
+        // Melhorar confirmações de exclusão
+        document.body.addEventListener("click", async (e) => {
+          // Verificar se é um formulário de exclusão
+          if (e.target.closest('form[action*="/delete/"]')) {
+            e.preventDefault();
+            const form = e.target.closest("form");
+            const isTask = form.action.includes("/tasks/delete/");
+            const isUser = form.action.includes("/users/delete/");
+
+            let itemName = "este item";
+
+            if (isTask) {
+              const taskCard = form.closest(".task-card");
+              if (taskCard) {
+                const titleElement = taskCard.querySelector(".task-title");
+                itemName = titleElement
+                  ? `a tarefa "${titleElement.textContent}"`
+                  : "esta tarefa";
+              }
+            } else if (isUser) {
+              const userCard = form.closest(".user-card");
+              if (userCard) {
+                const nameElement = userCard.querySelector(".user-name");
+                itemName = nameElement
+                  ? `o usuário "${nameElement.textContent}"`
+                  : "este usuário";
+              }
+            }
+
+            const confirmed = confirm(
+              `⚠️ Tem certeza que deseja excluir ${itemName}?\n\n` +
+                `Esta ação não pode ser desfeita.`
+            );
+
+            if (confirmed) {
+              // Mostrar loading
+              const button = form.querySelector('button[type="submit"]');
+              if (button) {
+                button.disabled = true;
+                button.innerHTML = "⏳ Excluindo...";
+              }
+              form.submit();
+            }
+            return;
+          }
+
+          // Código original para botões com data-action
+          const btn = e.target.closest("button[data-action]");
           if (!btn) return;
 
           const action = btn.dataset.action;
           const id = btn.dataset.id;
 
-          if (action === 'toggle-task') {
-            const res = await fetch(`/tasks/toggle/${id}`, { method: 'POST' });
+          if (action === "toggle-task") {
+            const res = await fetch(`/tasks/toggle/${id}`, { method: "POST" });
             if (res.redirected) window.location.href = res.url;
-            else alert('Erro ao alternar status da tarefa.');
+            else alert("Erro ao alternar status da tarefa.");
           }
 
-          if (action === 'delete-task') {
-            if (!confirm('Tem certeza que deseja excluir esta tarefa?')) return;
-            const res = await fetch(`/tasks/delete/${id}`, { method: 'POST' });
+          if (action === "delete-task") {
+            if (!confirm("Tem certeza que deseja excluir esta tarefa?")) return;
+            const res = await fetch(`/tasks/delete/${id}`, { method: "POST" });
             if (res.redirected) window.location.href = res.url;
-            else alert('Erro ao excluir tarefa.');
+            else alert("Erro ao excluir tarefa.");
           }
 
-          if (action === 'delete-user') {
-            if (!confirm('Tem certeza que deseja excluir este usuário?')) return;
-            const res = await fetch(`/users/delete/${id}`, { method: 'POST' });
+          if (action === "delete-user") {
+            if (!confirm("Tem certeza que deseja excluir este usuário?"))
+              return;
+            const res = await fetch(`/users/delete/${id}`, { method: "POST" });
             if (res.redirected) window.location.href = res.url;
-            else alert('Erro ao excluir usuário.');
+            else alert("Erro ao excluir usuário.");
           }
         });
       });
