@@ -96,47 +96,37 @@
                     </div>
 
                     <% if (taskStats.total > 0) { %>
-                        <!-- Usuário tem tarefas - mostrar opções -->
+                        <!-- Usuário tem tarefas -->
                         <div class="blocked-message">
                             <div class="alert alert-danger">
                                 <h4>❌ Exclusão Bloqueada</h4>
-                                <p>Este usuário não pode ser excluído porque possui <strong><%= taskStats.total %> tarefa(s)</strong> associada(s).</p>
-                                <p><strong>Opções disponíveis:</strong></p>
+                                <p>Este usuário não pode ser excluído porque possui <strong><%= taskStats.total %> tarefa(s)</strong> associada(s>.</p>
                                 <ul>
                                     <li>Remover todas as tarefas do usuário</li>
                                     <li>Reatribuir as tarefas para outro usuário</li>
                                     <li>Solicitar exclusão forçada (administrador)</li>
                                 </ul>
                             </div>
-                            
                             <div class="blocked-actions">
                                 <a href="/tasks" class="btn btn-primary">📋 Gerenciar Tarefas</a>
                                 <a href="/users" class="btn btn-secondary">⬅️ Voltar</a>
-                                
-                                <!-- Botão de exclusão forçada (apenas para demonstração) -->
+
                                 <div class="force-delete-section">
-                                    <h5>🔐 Exclusão Forçada (Administrador)</h5>
+                                    <h5>🔐 Exclusão Forçada</h5>
                                     <p class="warning-text">⚠️ Esta opção remove o usuário E todas as suas tarefas!</p>
-                                    <form action="/users/delete/<%= user.id %>?force=true" method="POST" id="force-delete-form">
-                                        <button type="submit" class="btn btn-danger btn-large" id="force-delete-btn">
-                                            💥 Forçar Exclusão (Admin)
-                                        </button>
-                                    </form>
+                                    <button class="btn btn-danger btn-large" id="force-delete-btn">
+                                        💥 Forçar Exclusão (Admin)
+                                    </button>
                                 </div>
                             </div>
                         </div>
                     <% } else { %>
-                        <!-- Usuário não tem tarefas - permitir exclusão -->
+                        <!-- Sem tarefas -->
                         <div class="action-buttons">
-                            <form action="/users/delete/<%= user.id %>" method="POST" id="delete-form">
-                                <button type="submit" class="btn btn-danger btn-large" id="confirm-delete">
-                                    🗑️ Confirmar Exclusão
-                                </button>
-                            </form>
-                            
-                            <a href="/users" class="btn btn-secondary btn-large">
-                                ❌ Cancelar
-                            </a>
+                            <button class="btn btn-danger btn-large" id="confirm-delete">
+                                🗑️ Confirmar Exclusão
+                            </button>
+                            <a href="/users" class="btn btn-secondary btn-large">❌ Cancelar</a>
                         </div>
                     <% } %>
                 </div>
@@ -146,61 +136,84 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Interceptar envio do formulário normal
-            const deleteForm = document.getElementById('delete-form');
-            if (deleteForm) {
-                deleteForm.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    
+            const userId = "<%= user.id %>";
+            const userName = "<%= user.name %>";
+            const taskCount = <%= taskStats.total %>;
+
+            const deleteBtn = document.getElementById('confirm-delete');
+            if (deleteBtn) {
+                deleteBtn.addEventListener('click', function () {
                     const confirmed = confirm(
                         `🚨 CONFIRMAÇÃO FINAL\n\n` +
-                        `Tem ABSOLUTA CERTEZA que deseja excluir o usuário "<%= user.name %>"?\n\n` +
+                        `Tem certeza que deseja excluir o usuário "${userName}"?\n` +
                         `Esta ação é IRREVERSÍVEL!`
                     );
-                    
                     if (confirmed) {
-                        const button = document.getElementById('confirm-delete');
-                        button.disabled = true;
-                        button.innerHTML = '⏳ Excluindo...';
-                        this.submit();
+                        deleteBtn.disabled = true;
+                        deleteBtn.innerHTML = '⏳ Excluindo...';
+
+                        fetch(`/users/delete/${userId}`, {
+                            method: 'POST'
+                        })
+                        .then(res => {
+                            if (res.ok) {
+                                window.location.href = '/users';
+                            } else {
+                                alert('Erro ao excluir usuário.');
+                                deleteBtn.disabled = false;
+                                deleteBtn.innerHTML = '🗑️ Confirmar Exclusão';
+                            }
+                        })
+                        .catch(err => {
+                            alert('Erro de rede.');
+                            deleteBtn.disabled = false;
+                            deleteBtn.innerHTML = '🗑️ Confirmar Exclusão';
+                        });
                     }
                 });
             }
 
-            // Interceptar envio do formulário de exclusão forçada
-            const forceDeleteForm = document.getElementById('force-delete-form');
-            if (forceDeleteForm) {
-                forceDeleteForm.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    
-                    const confirmed = confirm(
-                        `🚨 EXCLUSÃO FORÇADA - ATENÇÃO MÁXIMA!\n\n` +
-                        `Você está prestes a FORÇAR a exclusão do usuário "<%= user.name %>" e TODAS as suas <%= taskStats.total %> tarefa(s)!\n\n` +
-                        `Esta ação é EXTREMAMENTE PERIGOSA e IRREVERSÍVEL!\n\n` +
-                        `Tem ABSOLUTA CERTEZA?`
+            const forceDeleteBtn = document.getElementById('force-delete-btn');
+            if (forceDeleteBtn) {
+                forceDeleteBtn.addEventListener('click', function () {
+                    const confirm1 = confirm(
+                        `🚨 EXCLUSÃO FORÇADA!\n\n` +
+                        `Você está prestes a excluir o usuário "${userName}" e todas suas ${taskCount} tarefas!\n` +
+                        `Tem certeza?`
                     );
-                    
-                    if (confirmed) {
-                        const secondConfirm = confirm(
-                            `⚠️ SEGUNDA CONFIRMAÇÃO OBRIGATÓRIA\n\n` +
-                            `Digite "CONFIRMO" na próxima tela para prosseguir com a exclusão forçada.`
-                        );
-                        
-                        if (secondConfirm) {
-                            const finalConfirm = prompt(
-                                `Digite exatamente "CONFIRMO" para prosseguir com a exclusão forçada:`
-                            );
-                            
-                            if (finalConfirm === "CONFIRMO") {
-                                const button = document.getElementById('force-delete-btn');
-                                button.disabled = true;
-                                button.innerHTML = '💥 Forçando Exclusão...';
-                                this.submit();
-                            } else {
-                                alert('❌ Exclusão cancelada. Texto de confirmação incorreto.');
-                            }
-                        }
+                    if (!confirm1) return;
+
+                    const confirm2 = confirm(
+                        `⚠️ SEGUNDA CONFIRMAÇÃO\n\nDigite "CONFIRMO" na próxima tela para prosseguir.`
+                    );
+                    if (!confirm2) return;
+
+                    const input = prompt('Digite exatamente "CONFIRMO" para prosseguir:');
+                    if (input !== 'CONFIRMO') {
+                        alert('❌ Exclusão cancelada. Texto incorreto.');
+                        return;
                     }
+
+                    forceDeleteBtn.disabled = true;
+                    forceDeleteBtn.innerHTML = '💥 Forçando Exclusão...';
+
+                    fetch(`/users/delete/${userId}?force=true`, {
+                        method: 'POST'
+                    })
+                    .then(res => {
+                        if (res.ok) {
+                            window.location.href = '/users';
+                        } else {
+                            alert('Erro ao forçar exclusão.');
+                            forceDeleteBtn.disabled = false;
+                            forceDeleteBtn.innerHTML = '💥 Forçar Exclusão (Admin)';
+                        }
+                    })
+                    .catch(err => {
+                        alert('Erro de rede.');
+                        forceDeleteBtn.disabled = false;
+                        forceDeleteBtn.innerHTML = '💥 Forçar Exclusão (Admin)';
+                    });
                 });
             }
         });
