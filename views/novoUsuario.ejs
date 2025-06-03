@@ -23,7 +23,7 @@
             <p>Preencha os campos abaixo para criar um novo usuário</p>
           </div>
 
-          <form action="/users" method="POST" class="form">
+          <form id="userForm" class="form">
             <div class="form-group">
               <label for="name" class="form-label">
                 <span class="label-text">👤 Nome Completo *</span>
@@ -37,9 +37,7 @@
                   maxlength="100"
                 />
               </label>
-              <small class="form-help"
-                >Nome obrigatório (máximo 100 caracteres)</small
-              >
+              <small class="form-help">Nome obrigatório (máximo 100 caracteres)</small>
             </div>
 
             <div class="form-group">
@@ -51,13 +49,9 @@
                   name="email"
                   class="form-control"
                   placeholder="Ex: joao@exemplo.com"
-                  required
-                  maxlength="150"
                 />
               </label>
-              <small class="form-help"
-                >Email válido obrigatório (máximo 150 caracteres)</small
-              >
+              <small class="form-help">Email válido obrigatório</small>
             </div>
 
             <div class="form-actions">
@@ -74,91 +68,64 @@
     </div>
 
     <script>
-      // Validação do formulário
-      document.querySelector("form").addEventListener("submit", function (e) {
+      const form = document.getElementById("userForm");
+
+      form.addEventListener("submit", async function (e) {
+        e.preventDefault();
+
         const name = document.getElementById("name").value.trim();
         const email = document.getElementById("email").value.trim();
 
-        if (!name) {
-          e.preventDefault();
-          alert("⚠️ O nome é obrigatório!");
-          document.getElementById("name").focus();
-          return false;
+        // Validações
+        if (!name || name.length > 100) {
+          alert("⚠️ O nome é obrigatório e deve ter no máximo 100 caracteres!");
+          return;
         }
 
-        if (name.length > 100) {
-          e.preventDefault();
-          alert("⚠️ O nome deve ter no máximo 100 caracteres!");
-          document.getElementById("name").focus();
-          return false;
+    
+        if (!email ||email.length > 150) {
+          alert("⚠️ Insira um email válido com no máximo 150 caracteres!");
+          return;
         }
 
-        if (!email) {
-          e.preventDefault();
-          alert("⚠️ O email é obrigatório!");
-          document.getElementById("email").focus();
-          return false;
-        }
+        try {
+          const response = await fetch("/users", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ name, email }),
+          });
 
-        // Validação básica de email
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-          e.preventDefault();
-          alert("⚠️ Por favor, insira um email válido!");
-          document.getElementById("email").focus();
-          return false;
-        }
-
-        if (email.length > 150) {
-          e.preventDefault();
-          alert("⚠️ O email deve ter no máximo 150 caracteres!");
-          document.getElementById("email").focus();
-          return false;
+          if (response.ok) {
+            alert("✅ Usuário criado com sucesso!");
+            window.location.href = "/users";
+          } else {
+            const errorData = await response.json();
+            alert(`❌ Erro ao criar usuário: ${errorData.message || response.statusText}`);
+          }
+        } catch (error) {
+          alert("❌ Erro ao enviar os dados. Tente novamente.");
+          console.error(error);
         }
       });
 
-      // Preview em tempo real
+      // Contadores e preview
       const nameInput = document.getElementById("name");
       const emailInput = document.getElementById("email");
-      const previewAvatar = document.getElementById("preview-avatar");
-      const previewName = document.getElementById("preview-name");
-      const previewEmail = document.getElementById("preview-email");
 
-      function updatePreview() {
-        const name = nameInput.value.trim() || "Nome do usuário";
-        const email = emailInput.value.trim() || "email@exemplo.com";
-
-        previewAvatar.textContent = name.charAt(0).toUpperCase() || "?";
-        previewName.textContent = name;
-        previewEmail.textContent = `📧 ${email}`;
-      }
-
-      nameInput.addEventListener("input", updatePreview);
-      emailInput.addEventListener("input", updatePreview);
-
-      // Contador de caracteres
       nameInput.addEventListener("input", function () {
         const remaining = 100 - this.value.length;
         const help = this.parentNode.nextElementSibling;
         help.textContent = `Nome obrigatório (${remaining} caracteres restantes)`;
-
-        if (remaining < 10) {
-          help.style.color = "#e74c3c";
-        } else {
-          help.style.color = "#666";
-        }
+        help.style.color = remaining < 10 ? "#e74c3c" : "#666";
       });
 
       emailInput.addEventListener("input", function () {
         const remaining = 150 - this.value.length;
         const help = this.parentNode.nextElementSibling;
         help.textContent = `Email válido obrigatório (${remaining} caracteres restantes)`;
-
-        if (remaining < 20) {
-          help.style.color = "#e74c3c";
-        } else {
-          help.style.color = "#666";
-        }
+        help.style.color = remaining < 20 ? "#e74c3c" : "#666";
       });
     </script>
   </body>

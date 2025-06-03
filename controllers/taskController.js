@@ -6,10 +6,9 @@ const User = require("../models/user");
 // Página principal - Lista de tarefas (dados vêm do banco via modelo)
 exports.index = async (req, res) => {
   try {
-    const tasks = await Task.findAll(); // Busca dados do banco via modelo
-    const users = await User.findAll(); // Busca usuários para dropdown
+    const tasks = await Task.findAll();
+    const users = await User.findAll();
     res.render("tasks/index", {
-      // Renderiza view com dados do controller
       tasks,
       users,
       title: "Lista de Tarefas",
@@ -23,8 +22,8 @@ exports.index = async (req, res) => {
 // Página de formulário para nova tarefa
 exports.new = async (req, res) => {
   try {
-    const users = await User.findAll(); // Busca usuários para dropdown
-    res.render("nova", {
+    const users = await User.findAll();
+    res.render("novaTarefa", {
       users,
       title: "Nova Tarefa",
     });
@@ -66,7 +65,7 @@ exports.apiIndex = async (req, res) => {
   }
 };
 
-// Criar nova tarefa (POST do formulário) - renomeado de store para create
+// Criar nova tarefa (POST do formulário)
 exports.create = async (req, res) => {
   try {
     const { title, description, due_date, user_id } = req.body;
@@ -105,7 +104,7 @@ exports.update = async (req, res) => {
   }
 };
 
-// Alternar status da tarefa (concluída/pendente)
+// Alternar status da tarefa
 exports.toggle = async (req, res) => {
   try {
     const { id } = req.params;
@@ -113,7 +112,6 @@ exports.toggle = async (req, res) => {
     if (!task) {
       return res.status(404).send("Tarefa não encontrada");
     }
-
     await Task.update(id, { completed: !task.completed });
     res.redirect("/tasks");
   } catch (error) {
@@ -144,7 +142,7 @@ exports.byUser = async (req, res) => {
   }
 };
 
-// ========== API METHODS (retornam JSON para fetch()) ==========
+// ========== API METHODS ==========
 
 // API - Buscar tarefa por ID
 exports.apiShow = async (req, res) => {
@@ -203,7 +201,7 @@ exports.apiUpdate = async (req, res) => {
   }
 };
 
-// API - Alternar status da tarefa
+// API - Alternar status
 exports.apiToggle = async (req, res) => {
   try {
     const { id } = req.params;
@@ -216,10 +214,9 @@ exports.apiToggle = async (req, res) => {
       ...task,
       completed: !task.completed,
     });
+
     res.json({
-      message: `Tarefa ${
-        updatedTask.completed ? "concluída" : "reaberta"
-      } com sucesso!`,
+      message: `Tarefa ${updatedTask.completed ? "concluída" : "reaberta"} com sucesso!`,
       task: updatedTask,
     });
   } catch (error) {

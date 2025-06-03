@@ -11,47 +11,59 @@
       <a href="/">⬅️ Voltar</a>
     </nav>
 
-    <form id="new-user-form">
-      <label>Nome: <input type="text" name="name" required /></label><br />
-      <label>Email: <input type="email" name="email" required /></label><br />
-      <button type="submit">💾 Cadastrar</button>
-    </form>
-
     <ul id="user-list"></ul>
 
-    <script>
-      async function renderUsers() {
-        const res = await fetch("/api/users");
-        const users = await res.json();
+<!-- Seção de Usuários -->
+        <div class="card">
+          <div class="section-header">
+            <h2>👥 Lista de Usuários</h2>
+            <a href="/users/new" class="btn btn-success">👤 Criar Usuário</a>
+          </div>
 
-        const list = document.getElementById("user-list");
-        list.innerHTML = "";
-        users.forEach((user) => {
-          const li = document.createElement("li");
-          li.textContent = `${user.name} (${user.email})`;
-          list.appendChild(li);
-        });
-      }
+          <% if (users.length === 0) { %>
+          <div class="alert alert-info">
+            <p>
+              Nenhum usuário cadastrado.
+              <a href="/users/new">Criar primeiro usuário</a>
+            </p>
+          </div>
+          <% } else { %>
+          <div class="users-grid">
+            <% users.forEach(user => { %>
+            <div class="user-card">
+              <div class="user-avatar">
+                <span class="avatar-text">
+                  <%= user.name.charAt(0).toUpperCase() %>
+                </span>
+              </div>
 
-      document
-        .getElementById("new-user-form")
-        .addEventListener("submit", async (e) => {
-          e.preventDefault();
-          const form = e.target;
-          const data = {
-            name: form.name.value,
-            email: form.email.value,
-          };
-          await fetch("/api/users", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data),
-          });
-          form.reset();
-          renderUsers();
-        });
+              <div class="user-info">
+                <h3 class="user-name"><%= user.name %></h3>
+                <p class="user-email">📧 <%= user.email %></p>
+                <p class="user-id">🆔 ID: <%= user.id %></p>
+                <% if (user.created_at) { %>
+                <p class="user-date">
+                  📅 <%= new Date(user.created_at).toLocaleDateString('pt-BR') %>
+                </p>
+                <% } %>
+              </div>
 
-      renderUsers();
-    </script>
+              <div class="user-actions">
+                <a href="/users/edit/<%= user.id %>" class="btn btn-sm btn-secondary">✏️ Editar</a>
+
+                <button
+                  type="button"
+                  class="btn btn-sm btn-danger"
+                  data-action="delete-user"
+                  data-id="<%= user.id %>"
+                >
+                  🗑️ Excluir
+                </button>
+              </div>
+            </div>
+            <% }) %>
+          </div>
+          <% } %>
+        </div>
   </body>
 </html>

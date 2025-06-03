@@ -1,13 +1,12 @@
 const User = require("../models/user");
 
-// ========== VIEWS (Renderização de páginas EJS) ==========
+// ========== VIEWS ==========
 
-// Página principal - Lista de usuários (dados vêm do banco via modelo)
+// Página principal - Lista de usuários
 exports.index = async (req, res) => {
   try {
-    const users = await User.findAll(); // Busca dados do banco via modelo
+    const users = await User.findAll();
     res.render("usuarios", {
-      // Renderiza view com dados do controller
       users,
       title: "Lista de Usuários",
     });
@@ -17,7 +16,7 @@ exports.index = async (req, res) => {
   }
 };
 
-// Página de formulário para novo usuário
+// Página de novo usuário
 exports.new = async (req, res) => {
   try {
     res.render("novoUsuario", {
@@ -29,12 +28,11 @@ exports.new = async (req, res) => {
   }
 };
 
-// Página de formulário para editar usuário
+// Página de edição de usuário
 exports.edit = async (req, res) => {
   try {
     const { id } = req.params;
     const user = await User.findById(id);
-
     if (!user) {
       return res.status(404).send("Usuário não encontrado");
     }
@@ -49,27 +47,27 @@ exports.edit = async (req, res) => {
   }
 };
 
-// ========== ACTIONS (Processamento de formulários) ==========
+// ========== ACTIONS ==========
 
-// Criar novo usuário (POST do formulário)
+// Criar novo usuário
 exports.create = async (req, res) => {
   try {
     const { name, email } = req.body;
     await User.create(name, email);
-    res.redirect("/users"); // Redireciona para lista após criar
+    res.redirect("/novoUsuario");
   } catch (error) {
     console.error("Erro ao criar usuário:", error);
     res.status(500).send("Erro ao criar usuário");
   }
 };
 
-// Atualizar usuário (POST do formulário de edição)
+// Atualizar usuário
 exports.update = async (req, res) => {
   try {
     const { id } = req.params;
     const { name, email } = req.body;
     await User.update(id, { name, email });
-    res.redirect("/users"); // Redireciona para lista após atualizar
+    res.redirect("/usuarios");
   } catch (error) {
     console.error("Erro ao atualizar usuário:", error);
     res.status(500).send("Erro ao atualizar usuário");
@@ -81,22 +79,21 @@ exports.destroy = async (req, res) => {
   try {
     const { id } = req.params;
     await User.delete(id);
-    res.redirect("/users"); // Redireciona para lista após excluir
+    res.redirect("/usuarios");
   } catch (error) {
     console.error("Erro ao excluir usuário:", error);
     res.status(500).send("Erro ao excluir usuário");
   }
 };
 
-// ========== API METHODS (retornam JSON para fetch()) ==========
+// ========== API METHODS ==========
 
-// API - Listar todos os usuários
+// API - Buscar todos os usuários
 exports.apiIndex = async (req, res) => {
   try {
     const users = await User.findAll();
     res.json(users);
   } catch (error) {
-    console.error("Erro ao buscar usuários:", error);
     res.status(500).json({ error: "Erro ao buscar usuários" });
   }
 };
@@ -111,22 +108,17 @@ exports.apiShow = async (req, res) => {
     }
     res.json(user);
   } catch (error) {
-    console.error("Erro ao buscar usuário:", error);
     res.status(500).json({ error: "Erro ao buscar usuário" });
   }
 };
 
-// API - Criar novo usuário
+// API - Criar usuário
 exports.apiCreate = async (req, res) => {
   try {
     const { name, email } = req.body;
-    const newUser = await User.create(name, email);
-    res.status(201).json({
-      message: "Usuário criado com sucesso!",
-      user: newUser,
-    });
+    const user = await User.create(name, email);
+    res.status(201).json({ message: "Usuário criado com sucesso!", user });
   } catch (error) {
-    console.error("Erro ao criar usuário:", error);
     res.status(500).json({ error: "Erro ao criar usuário" });
   }
 };
@@ -137,12 +129,8 @@ exports.apiUpdate = async (req, res) => {
     const { id } = req.params;
     const { name, email } = req.body;
     const updatedUser = await User.update(id, { name, email });
-    res.json({
-      message: "Usuário atualizado com sucesso!",
-      user: updatedUser,
-    });
+    res.json({ message: "Usuário atualizado com sucesso!", user: updatedUser });
   } catch (error) {
-    console.error("Erro ao atualizar usuário:", error);
     res.status(500).json({ error: "Erro ao atualizar usuário" });
   }
 };
@@ -154,7 +142,6 @@ exports.apiDestroy = async (req, res) => {
     await User.delete(id);
     res.json({ message: "Usuário excluído com sucesso!" });
   } catch (error) {
-    console.error("Erro ao excluir usuário:", error);
     res.status(500).json({ error: "Erro ao excluir usuário" });
   }
 };

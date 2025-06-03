@@ -23,7 +23,7 @@
             <p>Preencha os campos abaixo para criar uma nova tarefa</p>
           </div>
 
-          <form action="/tasks" method="POST" class="form">
+          <form id="taskForm" class="form">
             <div class="form-group">
               <label for="title" class="form-label">
                 <span class="label-text">📋 Título da Tarefa *</span>
@@ -37,9 +37,7 @@
                   maxlength="100"
                 />
               </label>
-              <small class="form-help"
-                >Título obrigatório (máximo 100 caracteres)</small
-              >
+              <small class="form-help">Título obrigatório (máximo 100 caracteres)</small>
             </div>
 
             <div class="form-group">
@@ -54,9 +52,7 @@
                   maxlength="500"
                 ></textarea>
               </label>
-              <small class="form-help"
-                >Descrição opcional (máximo 500 caracteres)</small
-              >
+              <small class="form-help">Descrição opcional (máximo 500 caracteres)</small>
             </div>
 
             <div class="form-group">
@@ -72,7 +68,8 @@
                 </select>
               </label>
               <small class="form-help">
-                Usuário responsável pela tarefa. <% if (users.length === 0) { %>
+                Usuário responsável pela tarefa.
+                <% if (users.length === 0) { %>
                 <a href="/users/new" class="link">Criar primeiro usuário</a>
                 <% } %>
               </small>
@@ -89,9 +86,7 @@
                   min="<%= new Date().toISOString().split('T')[0] %>"
                 />
               </label>
-              <small class="form-help"
-                >Data limite para conclusão da tarefa</small
-              >
+              <small class="form-help">Data limite para conclusão da tarefa</small>
             </div>
 
             <div class="form-actions">
@@ -105,7 +100,6 @@
           </form>
         </div>
 
-        <!-- Dicas -->
         <div class="card">
           <h3>💡 Dicas</h3>
           <ul class="tips-list">
@@ -120,37 +114,61 @@
     </div>
 
     <script>
-      // Validação do formulário
-      document.querySelector("form").addEventListener("submit", function (e) {
+      // Envio do formulário com Fetch API
+      document.getElementById("taskForm").addEventListener("submit", async function (e) {
+        e.preventDefault();
+
         const title = document.getElementById("title").value.trim();
+        const description = document.getElementById("description").value.trim();
+        const userId = document.getElementById("user_id").value;
+        const dueDate = document.getElementById("due_date").value;
 
         if (!title) {
-          e.preventDefault();
           alert("⚠️ O título da tarefa é obrigatório!");
-          document.getElementById("title").focus();
-          return false;
+          return document.getElementById("title").focus();
         }
 
         if (title.length > 100) {
-          e.preventDefault();
           alert("⚠️ O título deve ter no máximo 100 caracteres!");
-          document.getElementById("title").focus();
-          return false;
+          return document.getElementById("title").focus();
+        }
+
+        const taskData = {
+          title,
+          description,
+          user_id: userId || null,
+          due_date: dueDate || null
+        };
+
+        try {
+          const response = await fetch("/tasks", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(taskData)
+          });
+
+          if (response.ok) {
+            alert("✅ Tarefa criada com sucesso!");
+            window.location.href = "/tasks";
+          } else {
+            const error = await response.text();
+            alert("❌ Erro ao criar tarefa: " + error);
+          }
+        } catch (error) {
+          alert("❌ Erro ao conectar com o servidor.");
+          console.error(error);
         }
       });
 
-      // Contador de caracteres para descrição
-      const description = document.getElementById("description");
-      description.addEventListener("input", function () {
+      // Atualiza contador de caracteres da descrição
+      const descriptionInput = document.getElementById("description");
+      descriptionInput.addEventListener("input", function () {
         const remaining = 500 - this.value.length;
-        const help = this.parentNode.nextElementSibling;
-        help.textContent = `Descrição opcional (${remaining} caracteres restantes)`;
-
-        if (remaining < 50) {
-          help.style.color = "#e74c3c";
-        } else {
-          help.style.color = "#666";
-        }
+        const helpText = this.parentElement.nextElementSibling;
+        helpText.textContent = `Descrição opcional (${remaining} caracteres restantes)`;
+        helpText.style.color = remaining < 50 ? "#e74c3c" : "#666";
       });
     </script>
   </body>

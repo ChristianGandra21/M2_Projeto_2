@@ -1,92 +1,65 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const listaTarefas = document.getElementById('lista-tarefas');
+  const fetchWithRedirect = async (url, options) => {
+    try {
+      const res = await fetch(url, options);
+      if (res.redirected) {
+        window.location.href = res.url;
+      } else if (!res.ok) {
+        const errText = await res.text();
+        throw new Error(errText || 'Erro na requisição.');
+      }
+    } catch (err) {
+      console.error(err);
+      alert(err.message || 'Erro inesperado.');
+    }
+  };
 
-  if (listaTarefas) {
-    fetch('/api/tarefas')
-      .then(res => res.json())
-      .then(tarefas => {
-        listaTarefas.innerHTML = '';
+  // Enviar formulário com Fetch POST
+  const setupFormSubmission = (formSelector, endpoint) => {
+    const form = document.querySelector(formSelector);
+    if (!form) return;
 
-        tarefas.forEach(tarefa => {
-          const li = document.createElement('li');
-          li.innerHTML = `
-            <h3>${tarefa.title}</h3>
-            <p>${tarefa.description}</p>
-            <p>Responsável: ${tarefa.user || 'Sem usuário'}</p>
-            <p>Status: ${tarefa.completed ? '✅ Concluída' : '⏳ Pendente'}</p>
-            <p>Entrega: ${new Date(tarefa.due_date).toLocaleDateString()}</p>
-            <a href="/tarefas/${tarefa.id}/editar">✏️ Editar</a>
-            <button onclick="concluirTarefa(${tarefa.id})">✔️ Concluir</button>
-            <button onclick="excluirTarefa(${tarefa.id})">🗑️ Excluir</button>
-          `;
-          listaTarefas.appendChild(li);
-        });
-      });
-  }
-
-  const formNovaTarefa = document.getElementById('form-nova-tarefa');
-  if (formNovaTarefa) {
-    formNovaTarefa.addEventListener('submit', e => {
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
 
-      const dados = {
-        title: formNovaTarefa.title.value,
-        description: formNovaTarefa.description.value,
-        due_date: formNovaTarefa.due_date.value,
-        user_id: formNovaTarefa.user_id.value || null
-      };
-
-      fetch('/api/tarefas', {
+      await fetchWithRedirect(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(dados)
-      })
-      .then(res => res.json())
-      .then(() => {
-        alert('Tarefa criada!');
-        window.location.href = '/tarefas';
+        body: JSON.stringify(data),
       });
     });
-  }
+  };
 
-  const formNovoUsuario = document.getElementById('form-novo-usuario');
-  if (formNovoUsuario) {
-    formNovoUsuario.addEventListener('submit', e => {
-      e.preventDefault();
+  setupFormSubmission('#new-task-form', '/tasks');
+  setupFormSubmission('#new-user-form', '/users');
 
-      const dados = {
-        name: formNovoUsuario.name.value,
-        email: formNovoUsuario.email.value
-      };
+  // Botões de ação: toggle, delete
+  document.body.addEventListener('click', async (e) => {
+    const btn = e.target.closest('button[data-action]');
+    if (!btn) return;
 
-      fetch('/api/users', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(dados)
-      })
-      .then(res => res.json())
-      .then(() => {
-        alert('Usuário criado!');
-        window.location.href = '/usuarios';
-      });
-    });
-  }
+    const { action, id } = btn.dataset;
+    let confirmed = true;
+
+    if (action === 'delete-task') {
+      confirmed = confirm('Tem certeza que deseja excluir esta tarefa?');
+    } else if (action === 'delete-user') {
+      confirmed = confirm('Tem certeza que deseja excluir este usuário?');
+    }
+
+    if (!confirmed) return;
+
+    const urlMap = {
+      'toggle-task': `/tasks/toggle/${id}`,
+      'delete-task': `/tasks/delete/${id}`,
+      'delete-user': `/users/delete/${id}`,
+    };
+
+    const url = urlMap[action];
+    if (url) {
+      await fetchWithRedirect(url, { method: 'POST' });
+    }
+  });
 });
-
-function concluirTarefa(id) {
-  fetch(`/api/tarefas/${id}`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ completed: true })
-  })
-  .then(() => location.reload());
-}
-
-function excluirTarefa(id) {
-  if (confirm('Tem certeza que deseja excluir?')) {
-    fetch(`/api/tarefas/${id}`, {
-      method: 'DELETE'
-    })
-    .then(() => location.reload());
-  }
-}

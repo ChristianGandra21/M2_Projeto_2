@@ -219,7 +219,7 @@
     <script>
         // Validação do formulário
         document.querySelector('form').addEventListener('submit', function(e) {
-            <% if (task) { %>
+            if (task) { 
                 const title = document.getElementById('title').value.trim();
 
                 if (!title) {
@@ -235,7 +235,7 @@
                     document.getElementById('title').focus();
                     return false;
                 }
-            <% } else if (user) { %>
+            } else if (user) {
                 const name = document.getElementById('name').value.trim();
                 const email = document.getElementById('email').value.trim();
 
@@ -261,10 +261,10 @@
                     document.getElementById('email').focus();
                     return false;
                 }
-            <% } %>
+            }
         });
 
-        <% if (task) { %>
+        if (task) {
             // Contador de caracteres para descrição
             const description = document.getElementById('description');
             description.addEventListener('input', function() {
@@ -278,7 +278,7 @@
                     help.style.color = '#666';
                 }
             });
-        <% } %>
+        }
     </script>
 </body>
 </html>
