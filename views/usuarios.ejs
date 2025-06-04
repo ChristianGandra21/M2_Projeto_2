@@ -54,9 +54,18 @@
               class="btn btn-sm btn-secondary"
               >✏️ Editar</a
             >
-            <a href="/users/delete/<%= user.id %>" class="btn btn-sm btn-danger"
-              >🗑️ Excluir</a
+
+            <form
+              action="/users/delete/<%= user.id %>"
+              method="POST"
+              style="display: inline"
+              class="delete-form"
+              data-user-name="<%= user.name %>"
             >
+              <button type="submit" class="btn btn-sm btn-danger">
+                🗑️ Excluir
+              </button>
+            </form>
           </div>
         </div>
         <% }) %>
@@ -95,13 +104,6 @@
                 name || "sem nome"
               }" foi excluído com sucesso!`;
               break;
-            case "user_deleted_forced":
-              const tasks = urlParams.get("tasks");
-              message = `⚠️ Usuário "${
-                name || "sem nome"
-              }" foi excluído via EXCLUSÃO FORÇADA! ${tasks} tarefa(s) também foram removidas.`;
-              alertClass = "alert-warning";
-              break;
             default:
               message = "✅ Operação realizada com sucesso!";
           }
@@ -129,6 +131,25 @@
             window.history.replaceState({}, document.title, newUrl);
           }
         }
+
+        // Confirmação de exclusão
+        document.addEventListener("submit", function (e) {
+          if (e.target.classList.contains("delete-form")) {
+            e.preventDefault();
+            const userName = e.target.dataset.userName;
+
+            if (
+              confirm(
+                `⚠️ Tem certeza que deseja excluir o usuário "${userName}"?\n\nEsta ação não pode ser desfeita.`
+              )
+            ) {
+              const button = e.target.querySelector("button");
+              button.disabled = true;
+              button.innerHTML = "⏳ Excluindo...";
+              e.target.submit();
+            }
+          }
+        });
       });
     </script>
   </body>

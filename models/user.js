@@ -27,8 +27,13 @@ module.exports = {
   },
 
   async delete(id) {
-    const query = "DELETE FROM users WHERE id = $1";
-    const result = await db.query(query, [id]);
-    return result.rowCount > 0;
+    try {
+      const query = "DELETE FROM users WHERE id = $1 RETURNING *";
+      const result = await db.query(query, [id]);
+      return result.rowCount > 0;
+    } catch (error) {
+      console.error("Erro ao deletar usuário:", error);
+      throw error;
+    }
   },
 };
