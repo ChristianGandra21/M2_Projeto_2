@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title || 'Novo Usuário' %></title>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>👤 Criar Novo Usuário</h1>
+        <nav>
+          <a href="/users" class="btn btn-secondary">⬅️ Voltar para Lista</a>
+          <a href="/tasks/new" class="btn btn-primary">📋 Nova Tarefa</a>
+        </nav>
+      </header>
+
+      <main>
+        <div class="card">
+          <div class="form-header">
+            <h2>👤 Dados do Novo Usuário</h2>
+            <p>Preencha os campos abaixo para criar um novo usuário</p>
+          </div>
+
+          <form id="userForm" class="form">
+            <div class="form-group">
+              <label for="name" class="form-label">
+                <span class="label-text">👤 Nome Completo *</span>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  class="form-control"
+                  placeholder="Ex: João Silva"
+                  required
+                  maxlength="100"
+                />
+              </label>
+              <small class="form-help">Nome obrigatório (máximo 100 caracteres)</small>
+            </div>
+
+            <div class="form-group">
+              <label for="email" class="form-label">
+                <span class="label-text">📧 Email *</span>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  class="form-control"
+                  placeholder="Ex: joao@exemplo.com"
+                />
+              </label>
+              <small class="form-help">Email válido obrigatório</small>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-success btn-large">
+                💾 Criar Usuário
+              </button>
+              <a href="/users" class="btn btn-secondary btn-large">
+                ❌ Cancelar
+              </a>
+            </div>
+          </form>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      const form = document.getElementById("userForm");
+
+      form.addEventListener("submit", async function (e) {
+        e.preventDefault();
+
+        const name = document.getElementById("name").value.trim();
+        const email = document.getElementById("email").value.trim();
+
+        // Validações
+        if (!name || name.length > 100) {
+          alert("⚠️ O nome é obrigatório e deve ter no máximo 100 caracteres!");
+          return;
+        }
+
+    
+        if (!email ||email.length > 150) {
+          alert("⚠️ Insira um email válido com no máximo 150 caracteres!");
+          return;
+        }
+
+        try {
+          const response = await fetch("/users", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ name, email }),
+          });
+
+          if (response.ok) {
+            alert("✅ Usuário criado com sucesso!");
+            window.location.href = "/users";
+          } else {
+            const errorData = await response.json();
+            alert(`❌ Erro ao criar usuário: ${errorData.message || response.statusText}`);
+          }
+        } catch (error) {
+          alert("❌ Erro ao enviar os dados. Tente novamente.");
+          console.error(error);
+        }
+      });
+
+      // Contadores e preview
+      const nameInput = document.getElementById("name");
+      const emailInput = document.getElementById("email");
+
+      nameInput.addEventListener("input", function () {
+        const remaining = 100 - this.value.length;
+        const help = this.parentNode.nextElementSibling;
+        help.textContent = `Nome obrigatório (${remaining} caracteres restantes)`;
+        help.style.color = remaining < 10 ? "#e74c3c" : "#666";
+      });
+
+      emailInput.addEventListener("input", function () {
+        const remaining = 150 - this.value.length;
+        const help = this.parentNode.nextElementSibling;
+        help.textContent = `Email válido obrigatório (${remaining} caracteres restantes)`;
+        help.style.color = remaining < 20 ? "#e74c3c" : "#666";
+      });
+    </script>
+  </body>
+</html>

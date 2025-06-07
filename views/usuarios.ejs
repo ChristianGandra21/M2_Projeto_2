@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Usuários</title>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <h1>👤 Usuários</h1>
+    <nav>
+      <a href="/">⬅️ Voltar</a>
+    </nav>
+
+    <ul id="user-list"></ul>
+
+    <!-- Seção de Usuários -->
+    <div class="card">
+      <div class="section-header">
+        <h2>👥 Lista de Usuários</h2>
+        <a href="/users/new" class="btn btn-success">👤 Criar Usuário</a>
+      </div>
+
+      <% if (users.length === 0) { %>
+      <div class="alert alert-info">
+        <p>
+          Nenhum usuário cadastrado.
+          <a href="/users/new">Criar primeiro usuário</a>
+        </p>
+      </div>
+      <% } else { %>
+      <div class="users-grid">
+        <% users.forEach(user => { %>
+        <div class="user-card">
+          <div class="user-avatar">
+            <span class="avatar-text">
+              <%= user.name.charAt(0).toUpperCase() %>
+            </span>
+          </div>
+
+          <div class="user-info">
+            <h3 class="user-name"><%= user.name %></h3>
+            <p class="user-email">📧 <%= user.email %></p>
+            <p class="user-id">🆔 ID: <%= user.id %></p>
+            <% if (user.created_at) { %>
+            <p class="user-date">
+              📅 <%= new Date(user.created_at).toLocaleDateString('pt-BR') %>
+            </p>
+            <% } %>
+          </div>
+
+          <div class="user-actions">
+            <a
+              href="/users/edit/<%= user.id %>"
+              class="btn btn-sm btn-secondary"
+              >✏️ Editar</a
+            >
+
+            <form
+              action="/users/delete/<%= user.id %>"
+              method="POST"
+              style="display: inline"
+              class="delete-form"
+              data-user-name="<%= user.name %>"
+            >
+              <button type="submit" class="btn btn-sm btn-danger">
+                🗑️ Excluir
+              </button>
+            </form>
+          </div>
+        </div>
+        <% }) %>
+      </div>
+      <% } %>
+    </div>
+
+    <!-- Container para mensagens -->
+    <div id="messages-container"></div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Mostrar mensagens de sucesso/erro baseadas nos parâmetros da URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const success = urlParams.get("success");
+        const name = urlParams.get("name");
+        const messagesContainer = document.getElementById("messages-container");
+
+        if (success && messagesContainer) {
+          let message = "";
+          let alertClass = "alert-success";
+
+          switch (success) {
+            case "user_created":
+              message = `✅ Usuário "${
+                name || "sem nome"
+              }" foi criado com sucesso!`;
+              break;
+            case "user_updated":
+              message = `✅ Usuário "${
+                name || "sem nome"
+              }" foi atualizado com sucesso!`;
+              break;
+            case "user_deleted":
+              message = `✅ Usuário "${
+                name || "sem nome"
+              }" foi excluído com sucesso!`;
+              break;
+            default:
+              message = "✅ Operação realizada com sucesso!";
+          }
+
+          if (message) {
+            const alertDiv = document.createElement("div");
+            alertDiv.className = `alert ${alertClass}`;
+            alertDiv.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span>${message}</span>
+                        <button onclick="this.parentElement.parentElement.remove()" style="background: none; border: none; font-size: 18px; cursor: pointer; color: #155724;">×</button>
+                    </div>
+                `;
+            messagesContainer.appendChild(alertDiv);
+
+            // Auto-remover após 5 segundos
+            setTimeout(() => {
+              if (alertDiv.parentNode) {
+                alertDiv.remove();
+              }
+            }, 5000);
+
+            // Limpar URL sem recarregar a página
+            const newUrl = window.location.pathname;
+            window.history.replaceState({}, document.title, newUrl);
+          }
+        }
+
+        // Confirmação de exclusão
+        document.addEventListener("submit", function (e) {
+          if (e.target.classList.contains("delete-form")) {
+            e.preventDefault();
+            const userName = e.target.dataset.userName;
+
+            if (
+              confirm(
+                `⚠️ Tem certeza que deseja excluir o usuário "${userName}"?\n\nEsta ação não pode ser desfeita.`
+              )
+            ) {
+              const button = e.target.querySelector("button");
+              button.disabled = true;
+              button.innerHTML = "⏳ Excluindo...";
+              e.target.submit();
+            }
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
