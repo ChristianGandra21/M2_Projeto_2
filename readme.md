@@ -1,121 +1,213 @@
-# Gerenciador de Tarefas
+# 📋 Sistema Gerenciador de Tarefas MVC
 
-Este é um sistema simples de gerenciamento de tarefas desenvolvido com Node.js utilizando o padrão arquitetural MVC (Model-View-Controller). O objetivo é permitir a criação, leitura, atualização e remoção de tarefas.
+> **Aplicação web completa para gerenciamento de tarefas e usuários, desenvolvida com arquitetura MVC**
 
-## ✅ Funcionalidades
+## 🎯 Sobre o Projeto
 
-- Cadastrar novas tarefas  
-- Listar tarefas existentes  
-- Marcar tarefas como concluídas  
-- Editar e deletar tarefas  
+O Sistema Gerenciador de Tarefas MVC é uma aplicação web robusta desenvolvida para auxiliar no controle e organização de atividades diárias. O sistema implementa um CRUD completo tanto para tarefas quanto para usuários, seguindo rigorosamente o padrão arquitetural MVC (Model-View-Controller).
 
----
+### ✨ Funcionalidades Principais
 
-## 📁 Estrutura de Pastas
+**🔧 Gestão de Tarefas:**
+- ✅ Criar, visualizar, editar e excluir tarefas
+- ✅ Marcar/desmarcar como concluídas
+- ✅ Associar responsáveis (usuários)
+- ✅ Definir datas de vencimento
+- ✅ Validações robustas de formulário
 
-```plaintext
-gerenciador-tarefas/
-├── assets/                    # Arquivos públicos como ícones e imagens
-│   └── favicon.ico
-├── config/                    # Configuração do banco de dados
-│   └── db.js
-├── controllers/              # Lógica das requisições HTTP
-│   ├── taskController.js
-│   └── userController.js
-├── documentos/               # Documentação do projeto
-│   ├── modelo_relacional.png # Diagrama relacional do banco
-│   ├── modelo.sql            # Script SQL para criação do banco
-│   └── wad.md                # Documento WAD com introdução e diagrama
-├── models/                   # Modelos que representam as tabelas
-│   ├── task.js
-│   └── user.js
-├── node_modules/             # Dependências instaladas
-├── routes/                   # Definição das rotas
-│   ├── tasks.js
-│   └── users.js
-├── scripts/                  # Scripts utilitários
-│   ├── init.sql
-│   └── runSQLScript.js
-├── services/                 # Regras de negócio
-│   └── userService.js
-├── tests/                    # Testes automatizados
-│   ├── userController.test.js
-│   ├── userModel.test.js
-│   ├── userRoutes.test.js
-│   └── userService.test.js
-├── views/                    # Views para renderização
-│   ├── components/           # Componentes reutilizáveis
-│   ├── css/                  # Arquivos de estilo
-│   ├── layout/               # Layout base
-│   └── tasks/                # Páginas da aplicação
-|      └── index.ejs
-├── .env                      # Variáveis de ambiente
-├── .gitattributes            # Configurações de versionamento Git
-├── .gitignore                # Ignorar arquivos no Git
-├── jest.config.js            # Configuração do Jest
-├── package-lock.json         # Lockfile do NPM
-├── package.json              # Configurações e dependências do projeto
-├── readme.md                 # Documentação do projeto
-├── rest.http                 # Teste de requisições HTTP
-└── app.js                 # Inicialização do servidor
+**👥 Gestão de Usuários:**
+- ✅ Cadastrar, visualizar, editar e excluir usuários
+- ✅ Validação de email único
+- ✅ Proteção contra exclusões inválidas
+- ✅ Verificação de integridade referencial
+
+**🎨 Interface e Experiência:**
+- ✅ Design responsivo (desktop, tablet, mobile)
+- ✅ Notificações inteligentes de sucesso/erro
+- ✅ Confirmações de segurança para ações destrutivas
+- ✅ Loading states durante operações
+- ✅ Navegação intuitiva e fluida
+
+## 🛠️ Tecnologias Utilizadas
+
+### Backend
+- **Node.js** - Runtime JavaScript
+- **Express.js** - Framework web
+- **PostgreSQL** - Banco de dados relacional
+- **pg** - Driver PostgreSQL para Node.js
+
+### Frontend
+- **EJS** - Template engine para renderização dinâmica
+- **CSS Customizado** - Estilização responsiva
+- **JavaScript Vanilla** - Interatividade sem dependências
+- **Fetch API** - Comunicação assíncrona com backend
+
+### Arquitetura
+- **MVC Pattern** - Separação clara de responsabilidades
+- **RESTful APIs** - Endpoints padronizados
+- **SQL Nativo** - Controle direto sobre queries
+
+## 📁 Estrutura do Projeto
+
+```
+mvc-boilerplate/
+├── app.js                 # Servidor principal Express
+├── package.json           # Dependências e scripts
+├── config/
+│   └── db.js             # Configuração do PostgreSQL
+├── controllers/
+│   ├── taskController.js # Lógica de negócio - tarefas
+│   └── userController.js # Lógica de negócio - usuários
+├── models/
+│   ├── task.js          # Modelo de dados - tarefas
+│   └── user.js          # Modelo de dados - usuários
+├── routes/
+│   ├── tasks.js         # Rotas de tarefas
+│   └── users.js         # Rotas de usuários
+├── views/
+│   ├── tasks/           # Views de tarefas
+│   │   ├── index.ejs    # Lista de tarefas
+│   │   └── new.ejs      # Formulário nova tarefa
+│   ├── users/           # Views de usuários
+│   │   ├── usuarios.ejs # Lista de usuários
+│   │   └── new.ejs      # Formulário novo usuário
+│   └── editar.ejs       # Formulário de edição universal
+├── public/
+│   ├── css/
+│   │   └── style.css    # Estilos customizados
+│   └── js/
+│       └── app.js       # JavaScript frontend
+├── scripts/
+│   └── init.sql         # Script de inicialização do BD
+└── documentos/
+    └── wad.md           # Documentação completa
 ```
 
----
+## 🚀 Como Executar
 
-## 🚀 Como Executar o Projeto Localmente
+### Pré-requisitos
+- Node.js (v14 ou superior)
+- PostgreSQL (v12 ou superior)
+- npm ou yarn
 
-### 1. Clone o repositório:
-
+### 1. Clone o repositório
 ```bash
-git clone https://github.com/seu-usuario/nome-do-repo.git
-cd nome-do-repo
+git clone <url-do-repositorio>
+cd mvc-boilerplate
 ```
 
-### 2. Instale as dependências:
-
+### 2. Instale as dependências
 ```bash
-npm install express dotenv pg 
+npm install
 ```
 
-### 3. Configure o arquivo `.env`:
+### 3. Configure o banco de dados
+```bash
+# Crie um banco PostgreSQL
+createdb task_manager
 
-```env
-PORT=3000
+# Execute o script de inicialização
+psql -d task_manager -f scripts/init.sql
+```
+
+### 4. Configure as variáveis de ambiente
+```bash
+# Crie um arquivo .env (opcional)
 DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=task_manager
 DB_USER=seu_usuario
 DB_PASSWORD=sua_senha
-DB_NAME=gerenciador_tarefas
-DB_PORT=porta_databasa
+PORT=3000
 ```
 
-### 4. Configure o banco de dados:
-
-Execute o script SQL localizado em `documentos/modelo.sql` no seu PostgreSQL (via Supabase, por exemplo).
-
-### 5. Inicie o servidor:
-
+### 5. Execute a aplicação
 ```bash
-npm run init-db
 npm start
 ```
 
-Acesse: [http://localhost:3000/tasks](http://localhost:3000/tasks)
+### 6. Acesse no navegador
+```
+http://localhost:3000
+```
+
+## 📊 Banco de Dados
+
+### Modelo Relacional
+O sistema utiliza duas tabelas principais:
+
+**users** (Usuários)
+- `id` (UUID) - Identificador único
+- `name` (VARCHAR) - Nome completo
+- `email` (VARCHAR) - Email único
+
+**tasks** (Tarefas)
+- `id` (SERIAL) - Identificador único
+- `title` (TEXT) - Título da tarefa
+- `description` (TEXT) - Descrição detalhada
+- `completed` (BOOLEAN) - Status de conclusão
+- `due_date` (DATE) - Data de vencimento
+- `user_id` (UUID) - Referência ao usuário responsável
+
+### Relacionamentos
+- Um usuário pode ter múltiplas tarefas (1:N)
+- Uma tarefa pode ter um usuário responsável (opcional)
+- Integridade referencial: ON DELETE SET NULL
+
+## 🌐 Endpoints da API
+
+### Tarefas
+- `GET /tasks` - Lista de tarefas (página)
+- `GET /tasks/new` - Formulário nova tarefa
+- `GET /tasks/edit/:id` - Formulário editar tarefa
+- `POST /tasks` - Criar tarefa
+- `POST /tasks/edit/:id` - Atualizar tarefa
+- `POST /tasks/toggle/:id` - Alternar status
+- `POST /tasks/delete/:id` - Excluir tarefa
+- `GET /api/tasks/api` - Listar tarefas (JSON)
+
+### Usuários
+- `GET /users` - Lista de usuários (página)
+- `GET /users/new` - Formulário novo usuário
+- `GET /users/edit/:id` - Formulário editar usuário
+- `POST /users` - Criar usuário
+- `POST /users/edit/:id` - Atualizar usuário
+- `POST /users/delete/:id` - Excluir usuário
+- `GET /api/users/api` - Listar usuários (JSON)
+
+## 🎨 Características da Interface
+
+### Design Responsivo
+- **Desktop**: Layout completo com navegação lateral
+- **Tablet**: Adaptação de grid e espaçamentos
+- **Mobile**: Layout vertical otimizado para touch
+
+### Componentes Interativos
+- **Notificações**: Mensagens automáticas com auto-remoção
+- **Confirmações**: Popups inteligentes para ações destrutivas
+- **Loading States**: Feedback visual durante operações
+- **Validações**: Feedback em tempo real nos formulários
+
+## 📝 Scripts Disponíveis
+
+```bash
+npm start          # Inicia o servidor
+npm run dev        # Modo desenvolvimento (com nodemon)
+npm test           # Executa testes (se configurados)
+```
+
+## 📄 Documentação
+
+Para documentação completa do projeto, consulte:
+- **Documentação Técnica**: `documentos/wad.md`
+- **Script do Banco**: `scripts/init.sql`
+- **Estrutura MVC**: Organização em `models/`, `views/`, `controllers/`
+
+## 👨‍💻 Autor
+
+**Christian Vinícius Gandra dos Santos**
+- Projeto Individual - Módulo 2 - Inteli
 
 ---
 
-## 🧩 Modelo Físico e Relacional do Banco
-
-- O modelo físico está no arquivo: `documentos/modelo.sql`
-- O diagrama relacional está em: `documentos/modelo_relacional.png`
-
----
-
-## 🧠 Arquitetura
-
-O projeto adota a arquitetura MVC, separando responsabilidades em **Model** (acesso a dados), **View** (interface do usuário) e **Controller** (lógica de negócio e rotas). Isso facilita a manutenção e escalabilidade do sistema.
-
----
-
-## 📄 Licença
-
-Este projeto é de uso acadêmico. Sinta-se à vontade para utilizá-lo como base para estudos.
+⭐ **Sistema completo de gerenciamento de tarefas com arquitetura MVC robusta!**
