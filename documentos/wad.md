@@ -363,7 +363,6 @@ O sistema foi desenvolvido com uma interface web moderna e responsiva, utilizand
 <sup>Fonte: Material produzido pelos autores (2025)</sup>
 </div>
 
-
 **Formulário de Novo Usuário (`/users/new`):**
 
 - Campos: nome e email
@@ -510,33 +509,68 @@ mvc-boilerplate/
 
 ### 4.2 Conclusões e Trabalhos Futuros
 
-O Sistema Gerenciador de Tarefas MVC atingiu seus objetivos de projeto, demonstrando a capacidade de construir uma aplicação web robusta, organizada e funcional com base no padrão MVC. Esta seção sintetiza os pontos fortes alcançados, identifica áreas para aprimoramento e delineia planos para o futuro do desenvolvimento.
+O Sistema Gerenciador de Tarefas MVC atingiu plenamente seus objetivos, demonstrando a capacidade de construir uma aplicação web robusta e funcional baseada no padrão arquitetural MVC. O projeto consolidou conhecimentos fundamentais em desenvolvimento web full-stack e proporcionou experiência prática valiosa na implementação de sistemas CRUD completos.
 
-### Desafios Enfrentados:
-O desenvolvimento do Sistema Gerenciador de Tarefas MVC, embora com objetivos claros de implementação CRUD, apresentou um desafio técnico primordial e central: a integração eficaz e harmoniosa entre a camada de apresentação (views) e as operações de manipulação de dados (CRUD). Este ponto foi a pedra angular para a funcionalidade do sistema, exigindo um entendimento aprofundado do fluxo de dados em uma arquitetura MVC.
+#### 4.2.1 Principais Decisões Técnicas
 
-A complexidade residiu em garantir que cada ação do usuário na interface (seja preencher um formulário, clicar em um botão de edição ou exclusão) fosse traduzida de forma precisa e segura em operações de banco de dados, e que as informações atualizadas fossem refletidas dinamicamente de volta para a tela. Isso demandou a superação de aspectos como:
+**Escolha da Arquitetura MVC:** A decisão de implementar rigorosamente o padrão MVC mostrou-se acertada, proporcionando organização clara do código e facilitando a manutenção. A separação entre Models (acesso a dados), Views (apresentação) e Controllers (lógica de negócio) permitiu desenvolvimento modular e escalável.
 
-**Orquestração de Fluxo:** Desenvolver uma lógica de controle robusta nos controllers que pudesse receber requisições das views, interagir com os models para processar os dados e, em seguida, retornar a resposta correta para a camada de apresentação, seja via renderização de novas páginas EJS ou através de respostas JSON para atualizações assíncronas via fetch().
+**PostgreSQL com SQL Nativo:** A opção por utilizar SQL nativo ao invés de ORMs ofereceu controle total sobre as queries e melhor compreensão das operações de banco de dados. Esta abordagem, embora mais trabalhosa inicialmente, resultou em queries otimizadas e maior flexibilidade.
 
-**Consistência de Dados:** Assegurar que os dados trafegando entre o frontend e o backend estivessem sempre consistentes e validados. Isso implicou na implementação de validações em ambas as camadas (frontend para feedback imediato e backend para segurança e integridade) e na gestão de mensagens de sucesso ou erro que informassem o usuário de forma clara.
-Manuseio de Estado da Aplicação: Gerenciar como o estado da aplicação era modificado após cada operação CRUD e como essa mudança era propagada para a interface, garantindo que a lista de tarefas ou usuários estivesse sempre atualizada, mesmo em interações assíncronas que evitavam o recarregamento total da página.
+**EJS como Template Engine:** A escolha do EJS facilitou a integração com o backend Node.js, permitindo renderização dinâmica de dados sem complexidade desnecessária. A sintaxe familiar do JavaScript acelerou o desenvolvimento das views.
 
-A superação desses pontos não foi apenas um exercício técnico, mas uma validação da eficácia do padrão MVC como um arcabouço para desenvolver aplicações web modulares e escaláveis. A capacidade de dividir o problema em componentes menores e interconectados — models para dados, views para UI e controllers para a lógica de negócio e fluxo — foi fundamental para construir um sistema coeso e funcional, demonstrando a habilidade em transformar requisitos em soluções arquiteturais concretas.
+#### 4.2.2 Desafios Superados
 
-### Aprendizados Obtidos
-A superação dos desafios de integração e a construção da aplicação resultaram em aprendizados fundamentais que fortaleceram as habilidades técnicas e metodológicas:
+O principal desafio enfrentado foi a **integração harmoniosa entre frontend e backend**, especificamente na sincronização entre as ações do usuário na interface e as operações de banco de dados. A complexidade residiu em garantir que cada interação fosse traduzida corretamente em operações CRUD e que as atualizações fossem refletidas dinamicamente na interface.
 
-#### Técnicos:
+**Orquestração de Fluxo:** Desenvolver controllers robustos que pudessem receber requisições das views, processar dados através dos models e retornar respostas adequadas, seja via renderização EJS ou JSON para operações assíncronas.
 
-✅ **Domínio do Padrão MVC:** Aprofundamento prático na aplicação e nos benefícios do padrão MVC, entendendo como cada camada contribui para a organização, manutenibilidade e escalabilidade do software.
+**Validação em Múltiplas Camadas:** Implementar validações tanto no frontend (feedback imediato) quanto no backend (segurança e integridade), garantindo consistência de dados e experiência de usuário fluida.
 
-✅ **Comunicação Frontend-Backend:** Experiência consolidada na orquestração da comunicação entre o lado do cliente (EJS, JavaScript Vanilla, Fetch API) e o lado do servidor (Node.js, Express), incluindo o gerenciamento de requisições, respostas e tratamento de dados.
+**Gerenciamento de Estado:** Manter a interface sempre atualizada após operações CRUD, especialmente em interações assíncronas que evitam recarregamento completo da página.
 
-#### Metodológicos:
+#### 4.2.3 Pontos que Funcionaram Muito Bem
 
-✅ **Abordagem Iterativa:** Compreensão do valor de desenvolver e testar as funcionalidades CRUD em etapas incrementais, permitindo a identificação e correção de problemas de integração precocemente.
+**Arquitetura MVC Bem Estruturada:** A implementação do padrão MVC proporcionou código organizado, manutenível e facilmente extensível. A separação clara de responsabilidades facilitou o desenvolvimento e debugging, demonstrando a eficácia desta arquitetura para aplicações web.
 
-✅ **Foco na Experiência do Usuário (UX):** A percepção de que mesmo em funcionalidades básicas, o feedback visual e a prevenção de erros são cruciais para a aceitação e usabilidade do sistema.
+**Interface Intuitiva e Responsiva:** O design desenvolvido apresenta navegação clara e feedback visual adequado. A responsividade funciona naturalmente em diferentes dispositivos, desde desktops até smartphones, mantendo usabilidade consistente em todas as plataformas.
 
----
+**Validações Robustas:** O sistema de validações em múltiplas camadas provou ser eficaz na prevenção de erros e garantia da integridade dos dados. As mensagens de erro são claras e orientam o usuário adequadamente.
+
+**Performance Otimizada:** As queries SQL são eficientes, o carregamento das páginas é rápido e as operações respondem de forma ágil. O uso de JavaScript vanilla manteve a aplicação leve e performática.
+
+**Funcionalidade CRUD Completa:** Todas as operações de Create, Read, Update e Delete funcionam de forma consistente e confiável para ambas as entidades (tarefas e usuários), com tratamento adequado de casos especiais como integridade referencial.
+
+#### 4.2.4 Pontos que Ainda Gostaria de Melhorar
+
+**Sistema de Autenticação:** Implementar login/logout com sessões de usuário para tornar o sistema multiusuário real, com controle de acesso e personalização por usuário.
+
+**Testes Automatizados:** Desenvolver suíte completa de testes unitários para models, testes de integração para controllers e testes end-to-end para a interface, garantindo qualidade e facilitando manutenção futura.
+
+**Funcionalidades Avançadas:** Adicionar filtros de busca, categorização de tarefas, notificações de vencimento e dashboard com estatísticas de produtividade.
+
+**Otimizações de Performance:** Implementar cache para queries frequentes, paginação para listas grandes e lazy loading para melhorar a experiência em datasets maiores.
+
+**Melhorias de UX:** Desenvolver drag-and-drop para reordenação de tarefas, modo escuro, atalhos de teclado e melhor feedback visual para ações em andamento.
+
+#### 4.2.5 Aprendizados Fundamentais
+
+**Técnicos:** O projeto consolidou conhecimentos em Node.js/Express, PostgreSQL, arquitetura MVC e desenvolvimento frontend moderno. A experiência com SQL nativo aprofundou a compreensão de banco de dados relacionais e otimização de queries.
+
+**Metodológicos:** A abordagem iterativa de desenvolvimento, com testes contínuos de funcionalidades, mostrou-se fundamental para identificar e corrigir problemas precocemente. A documentação contínua facilitou o desenvolvimento e será valiosa para manutenção futura.
+
+**Arquiteturais:** A implementação prática do padrão MVC demonstrou seus benefícios reais em termos de organização, manutenibilidade e escalabilidade, validando sua eficácia para aplicações web de médio porte.
+
+#### 4.2.6 Trabalhos Futuros
+
+**Curto Prazo:** Implementação de autenticação de usuários, adição de filtros de busca e desenvolvimento de testes automatizados básicos.
+
+**Médio Prazo:** Dashboard com analytics, sistema de notificações, API mobile e melhorias de performance com cache.
+
+**Longo Prazo:** Migração para arquitetura de microserviços, integração com calendários externos e implementação de colaboração em tempo real.
+
+ ---
+
+ O presente Web Application Document (WAD) detalhou exaustivamente o Sistema Gerenciador de Tarefas MVC, um projeto que não apenas atingiu seus objetivos funcionais de fornecer um robusto controle de tarefas e usuários com operações CRUD completas, mas também validou a eficácia do padrão arquitetural MVC em um ambiente de desenvolvimento real.
+ 
+ ---
