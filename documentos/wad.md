@@ -510,83 +510,33 @@ mvc-boilerplate/
 
 ### 4.2 Conclusões e Trabalhos Futuros
 
-#### 4.2.1 Pontos Fortes Alcançados
+O Sistema Gerenciador de Tarefas MVC atingiu seus objetivos de projeto, demonstrando a capacidade de construir uma aplicação web robusta, organizada e funcional com base no padrão MVC. Esta seção sintetiza os pontos fortes alcançados, identifica áreas para aprimoramento e delineia planos para o futuro do desenvolvimento.
 
-**Arquitetura Sólida:**
+### Desafios Enfrentados:
+O desenvolvimento do Sistema Gerenciador de Tarefas MVC, embora com objetivos claros de implementação CRUD, apresentou um desafio técnico primordial e central: a integração eficaz e harmoniosa entre a camada de apresentação (views) e as operações de manipulação de dados (CRUD). Este ponto foi a pedra angular para a funcionalidade do sistema, exigindo um entendimento aprofundado do fluxo de dados em uma arquitetura MVC.
 
-- ✅ **MVC Bem Implementado** → Separação clara entre Model, View e Controller
-- ✅ **Código Organizado** → Estrutura modular e manutenível
-- ✅ **Padrões Consistentes** → Nomenclatura e organização padronizadas
+A complexidade residiu em garantir que cada ação do usuário na interface (seja preencher um formulário, clicar em um botão de edição ou exclusão) fosse traduzida de forma precisa e segura em operações de banco de dados, e que as informações atualizadas fossem refletidas dinamicamente de volta para a tela. Isso demandou a superação de aspectos como:
 
-**Funcionalidade Completa:**
+**Orquestração de Fluxo:** Desenvolver uma lógica de controle robusta nos controllers que pudesse receber requisições das views, interagir com os models para processar os dados e, em seguida, retornar a resposta correta para a camada de apresentação, seja via renderização de novas páginas EJS ou através de respostas JSON para atualizações assíncronas via fetch().
 
-- ✅ **CRUD Completo** → Todas as operações implementadas para ambas entidades
-- ✅ **Validações Robustas** → Tanto frontend quanto backend
-- ✅ **Integridade de Dados** → Relacionamentos e constraints bem definidos
+**Consistência de Dados:** Assegurar que os dados trafegando entre o frontend e o backend estivessem sempre consistentes e validados. Isso implicou na implementação de validações em ambas as camadas (frontend para feedback imediato e backend para segurança e integridade) e na gestão de mensagens de sucesso ou erro que informassem o usuário de forma clara.
+Manuseio de Estado da Aplicação: Gerenciar como o estado da aplicação era modificado após cada operação CRUD e como essa mudança era propagada para a interface, garantindo que a lista de tarefas ou usuários estivesse sempre atualizada, mesmo em interações assíncronas que evitavam o recarregamento total da página.
 
-**Experiência do Usuário:**
+A superação desses pontos não foi apenas um exercício técnico, mas uma validação da eficácia do padrão MVC como um arcabouço para desenvolver aplicações web modulares e escaláveis. A capacidade de dividir o problema em componentes menores e interconectados — models para dados, views para UI e controllers para a lógica de negócio e fluxo — foi fundamental para construir um sistema coeso e funcional, demonstrando a habilidade em transformar requisitos em soluções arquiteturais concretas.
 
-- ✅ **Interface Intuitiva** → Navegação clara e feedback visual
-- ✅ **Responsividade** → Funciona bem em diferentes dispositivos
-- ✅ **Performance** → Carregamento rápido e operações eficientes
+### Aprendizados Obtidos
+A superação dos desafios de integração e a construção da aplicação resultaram em aprendizados fundamentais que fortaleceram as habilidades técnicas e metodológicas:
 
-#### 4.2.2 Pontos de Melhoria
+#### Técnicos:
 
-**Segurança:**
+✅ **Domínio do Padrão MVC:** Aprofundamento prático na aplicação e nos benefícios do padrão MVC, entendendo como cada camada contribui para a organização, manutenibilidade e escalabilidade do software.
 
-- 🔄 **Autenticação** → Sistema de login e sessões
-- 🔄 **Autorização** → Controle de acesso por usuário
-- 🔄 **Sanitização Avançada** → Proteção contra XSS e CSRF
+✅ **Comunicação Frontend-Backend:** Experiência consolidada na orquestração da comunicação entre o lado do cliente (EJS, JavaScript Vanilla, Fetch API) e o lado do servidor (Node.js, Express), incluindo o gerenciamento de requisições, respostas e tratamento de dados.
 
-**Funcionalidades:**
+#### Metodológicos:
 
-- 🔄 **Filtros e Busca** → Pesquisar tarefas por critérios
-- 🔄 **Categorias** → Organização de tarefas por categoria
-- 🔄 **Notificações** → Alertas de vencimento
+✅ **Abordagem Iterativa:** Compreensão do valor de desenvolver e testar as funcionalidades CRUD em etapas incrementais, permitindo a identificação e correção de problemas de integração precocemente.
 
-#### 4.2.3 Trabalhos Futuros
-
-**Curto Prazo:**
-
-- 📋 **Sistema de Autenticação** → Login/logout com sessões
-- 📋 **Filtros Avançados** → Busca por status, data, responsável
-- 📋 **Paginação** → Para listas grandes de tarefas/usuários
-- 📋 **Exportação** → Relatórios em PDF/Excel
-
-**Médio Prazo:**
-
-- 📋 **Dashboard Analytics** → Gráficos de produtividade
-- 📋 **Sistema de Notificações** → Emails de lembrete
-- 📋 **API Mobile** → Endpoints para aplicativo móvel
-- 📋 **Temas Customizáveis** → Dark mode e personalização
-
-**Longo Prazo:**
-
-- 📋 **Colaboração em Tempo Real** → WebSockets para updates
-- 📋 **Integração com Calendários** → Google Calendar, Outlook
-- 📋 **Inteligência Artificial** → Sugestões automáticas de priorização
-- 📋 **Microserviços** → Arquitetura distribuída para escalabilidade
-
-#### 4.2.4 Aprendizados Obtidos
-
-**Técnicos:**
-
-- ✅ **Arquitetura MVC** → Compreensão profunda do padrão
-- ✅ **Node.js e Express** → Desenvolvimento backend robusto
-- ✅ **PostgreSQL** → Modelagem e queries relacionais
-- ✅ **Frontend Moderno** → JavaScript, CSS e responsividade
-
-**Metodológicos:**
-
-- ✅ **Planejamento** → Importância da modelagem prévia
-- ✅ **Iteração** → Desenvolvimento incremental
-- ✅ **Testes** → Validação contínua das funcionalidades
-- ✅ **Documentação** → Registro detalhado do processo
-
-## <a name="c5"></a>5. Referências
-
-_Incluir as principais referências de seu projeto, para que seu parceiro possa consultar caso ele se interessar em aprofundar. Um exemplo de referência de livro e de site:_<br>
-
----
+✅ **Foco na Experiência do Usuário (UX):** A percepção de que mesmo em funcionalidades básicas, o feedback visual e a prevenção de erros são cruciais para a aceitação e usabilidade do sistema.
 
 ---
