@@ -1,93 +1,155 @@
-const Task = require("../models/task");
-const User = require("../models/user");
+/**
+ * CONTROLLER DE TAREFAS - CAMADA DE CONTROLE
+ *
+ * Este módulo implementa a camada Controller do padrão MVC para a entidade Task.
+ * Responsável por processar requisições HTTP, interagir com os models e
+ * retornar respostas adequadas (views renderizadas ou dados JSON).
+ *
+ * Funcionalidades:
+ * - Renderização de páginas EJS (views)
+ * - Processamento de formulários HTML
+ * - APIs RESTful para comunicação via fetch()
+ * - Validações de dados de entrada
+ * - Tratamento de erros e mensagens de feedback
+ */
+
+// Importação dos models necessários
+const Task = require("../models/task"); // Model para operações com tarefas
+const User = require("../models/user"); // Model para buscar usuários (responsáveis)
 
 // ========== VIEWS (Renderização de páginas EJS) ==========
 
-// Página principal - Lista de tarefas (dados vêm do banco via modelo)
+/**
+ * Página principal - Lista de tarefas
+ * Renderiza a view principal com todas as tarefas e usuários disponíveis
+ */
 exports.index = async (req, res) => {
   try {
+    // Busca todas as tarefas com informações dos usuários responsáveis
     const tasks = await Task.findAll();
+    // Busca todos os usuários para exibir na interface
     const users = await User.findAll();
+
+    // Renderiza a view principal passando os dados
     res.render("tasks/index", {
-      tasks,
-      users,
-      title: "Lista de Tarefas",
+      tasks, // Lista de tarefas para exibição
+      users, // Lista de usuários para gerenciamento
+      title: "Lista de Tarefas", // Título da página
     });
   } catch (error) {
+    // Log do erro para debugging
     console.error("Erro ao buscar tarefas:", error);
+    // Retorna erro 500 com mensagem amigável
     res.status(500).send("Erro ao carregar tarefas");
   }
 };
 
-// Página de formulário para nova tarefa
+/**
+ * Página de formulário para nova tarefa
+ * Renderiza o formulário de criação com lista de usuários disponíveis
+ */
 exports.new = async (req, res) => {
   try {
+    // Busca todos os usuários para o dropdown de responsáveis
     const users = await User.findAll();
+
+    // Renderiza o formulário de nova tarefa
     res.render("novaTarefa", {
-      users,
-      title: "Nova Tarefa",
+      users, // Lista de usuários para seleção
+      title: "Nova Tarefa", // Título da página
     });
   } catch (error) {
+    // Log do erro para debugging
     console.error("Erro ao carregar formulário:", error);
+    // Retorna erro 500 com mensagem amigável
     res.status(500).send("Erro ao carregar formulário");
   }
 };
 
-// Página de formulário para editar tarefa
+/**
+ * Página de formulário para editar tarefa
+ * Renderiza o formulário de edição com dados da tarefa e lista de usuários
+ */
 exports.edit = async (req, res) => {
   try {
+    // Extrai o ID da tarefa dos parâmetros da URL
     const { id } = req.params;
+
+    // Busca a tarefa específica por ID
     const task = await Task.findById(id);
+    // Busca todos os usuários para o dropdown de responsáveis
     const users = await User.findAll();
 
+    // Verifica se a tarefa existe
     if (!task) {
       return res.status(404).send("Tarefa não encontrada");
     }
 
+    // Renderiza o formulário de edição com dados pré-preenchidos
     res.render("editar", {
-      task,
-      users,
-      title: "Editar Tarefa",
+      task, // Dados da tarefa para pré-preenchimento
+      users, // Lista de usuários para seleção
+      title: "Editar Tarefa", // Título da página
     });
   } catch (error) {
+    // Log do erro para debugging
     console.error("Erro ao carregar tarefa:", error);
+    // Retorna erro 500 com mensagem amigável
     res.status(500).send("Erro ao carregar tarefa");
   }
 };
 
-// API - Buscar todas as tarefas
+// ========== APIs JSON (para comunicação via fetch()) ==========
+
+/**
+ * API - Buscar todas as tarefas
+ * Retorna lista de tarefas em formato JSON para uso via fetch()
+ */
 exports.apiIndex = async (req, res) => {
   try {
+    // Busca todas as tarefas
     const tasks = await Task.findAll();
+    // Retorna dados em formato JSON
     res.json(tasks);
   } catch (err) {
+    // Retorna erro em formato JSON
     res.status(500).json({ error: "Erro ao buscar tarefas" });
   }
 };
 
-// Criar nova tarefa (POST do formulário)
+// ========== PROCESSAMENTO DE FORMULÁRIOS ==========
+
+/**
+ * Criar nova tarefa (POST do formulário HTML)
+ * Processa dados do formulário e cria nova tarefa no banco
+ */
 exports.create = async (req, res) => {
   try {
+    // Extrai dados do corpo da requisição (formulário)
     const { title, description, due_date, user_id } = req.body;
 
-    // Validações básicas
+    // Validação obrigatória: título não pode estar vazio
     if (!title || title.trim().length === 0) {
       return res.status(400).send("❌ Erro: O título da tarefa é obrigatório!");
     }
 
+    // Cria nova tarefa no banco de dados
     const newTask = await Task.create({
-      title: title.trim(),
-      description: description ? description.trim() : null,
-      due_date,
-      user_id,
+      title: title.trim(), // Remove espaços extras
+      description: description ? description.trim() : null, // Opcional, remove espaços
+      due_date, // Data de vencimento (opcional)
+      user_id, // ID do usuário responsável (opcional)
     });
 
-    // Redirecionar com mensagem de sucesso
+    // Redireciona para página principal com mensagem de sucesso
+    // Passa título da tarefa na URL para exibir notificação
     res.redirect(
       "/tasks?success=task_created&title=" + encodeURIComponent(title.trim())
     );
   } catch (err) {
+    // Log do erro para debugging
     console.error("Erro ao criar tarefa:", err);
+    // Retorna erro 500 com mensagem amigável
     res
       .status(500)
       .send(

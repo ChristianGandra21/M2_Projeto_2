@@ -1,48 +1,89 @@
+/**
+ * CONTROLLER DE USUÁRIOS - CAMADA DE CONTROLE
+ *
+ * Este módulo implementa a camada Controller do padrão MVC para a entidade User.
+ * Responsável por processar requisições HTTP relacionadas aos usuários,
+ * interagir com o model User e retornar respostas adequadas.
+ *
+ * Funcionalidades:
+ * - Renderização de páginas EJS para usuários
+ * - Processamento de formulários de usuários
+ * - APIs RESTful para operações com usuários
+ * - Validações de dados (nome, email único)
+ * - Verificação de integridade referencial (tarefas associadas)
+ */
+
+// Importação do model de usuários
 const User = require("../models/user");
 
-// ========== VIEWS ==========
+// ========== VIEWS (Renderização de páginas EJS) ==========
 
-// Página principal - Lista de usuários
+/**
+ * Página principal - Lista de usuários
+ * Renderiza a view com todos os usuários cadastrados no sistema
+ */
 exports.index = async (req, res) => {
   try {
+    // Busca todos os usuários ordenados por nome
     const users = await User.findAll();
+
+    // Renderiza a página de usuários
     res.render("usuarios", {
-      users,
-      title: "Lista de Usuários",
+      users, // Lista de usuários para exibição
+      title: "Lista de Usuários", // Título da página
     });
   } catch (error) {
+    // Log do erro para debugging
     console.error("Erro ao buscar usuários:", error);
+    // Retorna erro 500 com mensagem amigável
     res.status(500).send("Erro ao carregar usuários");
   }
 };
 
-// Página de novo usuário
+/**
+ * Página de formulário para novo usuário
+ * Renderiza o formulário de criação de usuário
+ */
 exports.new = async (req, res) => {
   try {
+    // Renderiza o formulário de novo usuário
     res.render("novoUsuario", {
-      title: "Novo Usuário",
+      title: "Novo Usuário", // Título da página
     });
   } catch (error) {
+    // Log do erro para debugging
     console.error("Erro ao carregar formulário:", error);
+    // Retorna erro 500 com mensagem amigável
     res.status(500).send("Erro ao carregar formulário");
   }
 };
 
-// Página de edição de usuário
+/**
+ * Página de formulário para editar usuário
+ * Renderiza o formulário de edição com dados do usuário pré-preenchidos
+ */
 exports.edit = async (req, res) => {
   try {
+    // Extrai o ID do usuário dos parâmetros da URL
     const { id } = req.params;
+
+    // Busca o usuário específico por ID
     const user = await User.findById(id);
+
+    // Verifica se o usuário existe
     if (!user) {
       return res.status(404).send("Usuário não encontrado");
     }
 
+    // Renderiza o formulário de edição com dados pré-preenchidos
     res.render("editar", {
-      user,
-      title: "Editar Usuário",
+      user, // Dados do usuário para pré-preenchimento
+      title: "Editar Usuário", // Título da página
     });
   } catch (error) {
+    // Log do erro para debugging
     console.error("Erro ao carregar usuário:", error);
+    // Retorna erro 500 com mensagem amigável
     res.status(500).send("Erro ao carregar usuário");
   }
 };
