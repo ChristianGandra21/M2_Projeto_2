@@ -2,9 +2,28 @@
 
 > **Aplicação web completa para gerenciamento de tarefas e usuários, desenvolvida com arquitetura MVC**
 
+[![Node.js](https://img.shields.io/badge/Node.js-v14+-green.svg)](https://nodejs.org/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-v12+-blue.svg)](https://www.postgresql.org/)
+[![Express.js](https://img.shields.io/badge/Express.js-v4.21+-lightgrey.svg)](https://expressjs.com/)
+[![EJS](https://img.shields.io/badge/EJS-v3.1+-orange.svg)](https://ejs.co/)
+
 ## 🎯 Sobre o Projeto
 
-O Sistema Gerenciador de Tarefas MVC é uma aplicação web robusta desenvolvida para auxiliar no controle e organização de atividades diárias. O sistema implementa um CRUD completo tanto para tarefas quanto para usuários, seguindo rigorosamente o padrão arquitetural MVC (Model-View-Controller).
+O **Sistema Gerenciador de Tarefas MVC** é uma aplicação web completa desenvolvida para auxiliar no controle e organização de atividades diárias. O sistema implementa um **CRUD completo** tanto para tarefas quanto para usuários, seguindo rigorosamente o padrão arquitetural **MVC (Model-View-Controller)**.
+
+### 🎥 Demonstração
+
+> **[📹 Vídeo de Demonstração](LINK_DO_VIDEO_AQUI)**
+> 
+> *Assista ao vídeo completo mostrando todas as funcionalidades do sistema em ação.*
+
+### 📸 Interface do Sistema
+
+*Screenshots serão adicionados aqui mostrando:*
+- *Tela principal com lista de tarefas*
+- *Formulário de criação de tarefa*
+- *Gerenciamento de usuários*
+- *Interface responsiva em mobile*
 
 ### ✨ Funcionalidades Principais
 
@@ -51,134 +70,171 @@ O Sistema Gerenciador de Tarefas MVC é uma aplicação web robusta desenvolvida
 
 ```
 mvc-boilerplate/
-├── app.js                 # Servidor principal Express
-├── package.json           # Dependências e scripts
+├── app.js                 # 🚀 Servidor principal Express
+├── package.json           # 📦 Dependências e scripts
 ├── config/
-│   └── db.js             # Configuração do PostgreSQL
+│   └── db.js             # 🔧 Configuração do PostgreSQL
 ├── controllers/
-│   ├── taskController.js # Lógica de negócio - tarefas
-│   └── userController.js # Lógica de negócio - usuários
+│   ├── taskController.js # 🎮 Lógica de negócio - tarefas
+│   └── userController.js # 🎮 Lógica de negócio - usuários
 ├── models/
-│   ├── task.js          # Modelo de dados - tarefas
-│   └── user.js          # Modelo de dados - usuários
+│   ├── task.js          # 📊 Modelo de dados - tarefas
+│   └── user.js          # 📊 Modelo de dados - usuários
 ├── routes/
-│   ├── tasks.js         # Rotas de tarefas
-│   └── users.js         # Rotas de usuários
+│   ├── index.js         # 🛣️ Rota principal
+│   ├── tasks.js         # 🛣️ Rotas de tarefas
+│   └── users.js         # 🛣️ Rotas de usuários
 ├── views/
-│   ├── tasks/           # Views de tarefas
-│   │   ├── index.ejs    # Lista de tarefas
-│   │   └── new.ejs      # Formulário nova tarefa
-│   ├── users/           # Views de usuários
-│   │   ├── usuarios.ejs # Lista de usuários
-│   │   └── new.ejs      # Formulário novo usuário
-│   └── editar.ejs       # Formulário de edição universal
+│   ├── tasks/           # 🎨 Views de tarefas
+│   │   ├── index.ejs    # 📋 Lista de tarefas
+│   │   └── new.ejs      # ➕ Formulário nova tarefa
+│   ├── users/           # 🎨 Views de usuários
+│   │   ├── usuarios.ejs # 👥 Lista de usuários
+│   │   └── new.ejs      # ➕ Formulário novo usuário
+│   └── editar.ejs       # ✏️ Formulário de edição universal
 ├── public/
 │   ├── css/
-│   │   └── style.css    # Estilos customizados
+│   │   └── style.css    # 🎨 Estilos customizados
 │   └── js/
-│       └── app.js       # JavaScript frontend
+│       └── app.js       # ⚡ JavaScript frontend
 ├── scripts/
-│   └── init.sql         # Script de inicialização do BD
+│   └── init.sql         # 🗄️ Script de inicialização do BD
 └── documentos/
-    └── wad.md           # Documentação completa
+    └── wad.md           # 📚 Documentação técnica completa
 ```
 
-## 🚀 Como Executar
+## 🚀 Como Executar o Projeto
 
 ### Pré-requisitos
-- Node.js (v14 ou superior)
-- PostgreSQL (v12 ou superior)
-- npm ou yarn
 
-### 1. Clone o repositório
+Certifique-se de ter instalado em sua máquina:
+
+- **Node.js** (versão 14 ou superior) - [Download aqui](https://nodejs.org/)
+- **PostgreSQL** (versão 12 ou superior) - [Download aqui](https://www.postgresql.org/download/)
+- **npm** (geralmente vem com Node.js)
+
+### Passo 1: Clone o repositório
+
 ```bash
 git clone <url-do-repositorio>
 cd mvc-boilerplate
 ```
 
-### 2. Instale as dependências
+### Passo 2: Instale as dependências
+
 ```bash
 npm install
 ```
 
-### 3. Configure o banco de dados
-```bash
-# Crie um banco PostgreSQL
-createdb task_manager
+### Passo 3: Configure o banco de dados
 
-# Execute o script de inicialização
-psql -d task_manager -f scripts/init.sql
+#### 3.1 Crie o banco de dados
+```bash
+# No terminal do PostgreSQL ou pgAdmin
+createdb task_manager
 ```
 
-### 4. Configure as variáveis de ambiente
+#### 3.2 Execute o script de inicialização
 ```bash
-# Crie um arquivo .env (opcional)
+# Opção 1: Via psql
+psql -d task_manager -f scripts/init.sql
+
+# Opção 2: Via npm script (se configurado)
+npm run init-db
+```
+
+### Passo 4: Configure variáveis de ambiente (opcional)
+
+Crie um arquivo `.env` na raiz do projeto:
+
+```env
+# Configurações do banco de dados
 DB_HOST=localhost
 DB_PORT=5432
 DB_NAME=task_manager
 DB_USER=seu_usuario
 DB_PASSWORD=sua_senha
+
+# Porta do servidor
 PORT=3000
 ```
 
-### 5. Execute a aplicação
+### Passo 5: Execute a aplicação
+
 ```bash
+# Modo produção
 npm start
+
+# Modo desenvolvimento (com auto-reload)
+npm run dev
 ```
 
-### 6. Acesse no navegador
+### Passo 6: Acesse a aplicação
+
+Abra seu navegador e acesse:
+
 ```
 http://localhost:3000
 ```
 
+🎉 **Pronto! O sistema está funcionando!**
+
 ## 📊 Banco de Dados
 
 ### Modelo Relacional
+
 O sistema utiliza duas tabelas principais:
 
-**users** (Usuários)
-- `id` (UUID) - Identificador único
-- `name` (VARCHAR) - Nome completo
-- `email` (VARCHAR) - Email único
+```sql
+-- Tabela de usuários
+CREATE TABLE users (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  name VARCHAR(100) NOT NULL,
+  email VARCHAR(100) UNIQUE NOT NULL
+);
 
-**tasks** (Tarefas)
-- `id` (SERIAL) - Identificador único
-- `title` (TEXT) - Título da tarefa
-- `description` (TEXT) - Descrição detalhada
-- `completed` (BOOLEAN) - Status de conclusão
-- `due_date` (DATE) - Data de vencimento
-- `user_id` (UUID) - Referência ao usuário responsável
+-- Tabela de tarefas
+CREATE TABLE tasks (
+  id SERIAL PRIMARY KEY,
+  title TEXT NOT NULL,
+  description TEXT,
+  completed BOOLEAN DEFAULT false,
+  due_date DATE,
+  user_id UUID,
+  CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+);
+```
 
 ### Relacionamentos
-- Um usuário pode ter múltiplas tarefas (1:N)
-- Uma tarefa pode ter um usuário responsável (opcional)
-- Integridade referencial: ON DELETE SET NULL
+- **1:N** → Um usuário pode ter múltiplas tarefas
+- **Opcional** → Uma tarefa pode ter um usuário responsável ou ser independente
+- **Integridade** → ON DELETE SET NULL mantém tarefas mesmo se usuário for excluído
 
 ## 🌐 Endpoints da API
 
-### Tarefas
-- `GET /tasks` - Lista de tarefas (página)
-- `GET /tasks/new` - Formulário nova tarefa
-- `GET /tasks/edit/:id` - Formulário editar tarefa
-- `POST /tasks` - Criar tarefa
-- `POST /tasks/edit/:id` - Atualizar tarefa
-- `POST /tasks/toggle/:id` - Alternar status
-- `POST /tasks/delete/:id` - Excluir tarefa
-- `GET /api/tasks/api` - Listar tarefas (JSON)
+### 📋 Tarefas
+- `GET /tasks` → Lista de tarefas (página web)
+- `GET /tasks/new` → Formulário nova tarefa
+- `GET /tasks/edit/:id` → Formulário editar tarefa
+- `POST /tasks` → Criar tarefa
+- `POST /tasks/edit/:id` → Atualizar tarefa
+- `POST /tasks/toggle/:id` → Alternar status (concluída/pendente)
+- `POST /tasks/delete/:id` → Excluir tarefa
+- `GET /api/tasks/api` → Listar tarefas (JSON)
 
-### Usuários
-- `GET /users` - Lista de usuários (página)
-- `GET /users/new` - Formulário novo usuário
-- `GET /users/edit/:id` - Formulário editar usuário
-- `POST /users` - Criar usuário
-- `POST /users/edit/:id` - Atualizar usuário
-- `POST /users/delete/:id` - Excluir usuário
-- `GET /api/users/api` - Listar usuários (JSON)
+### 👥 Usuários
+- `GET /users` → Lista de usuários (página web)
+- `GET /users/new` → Formulário novo usuário
+- `GET /users/edit/:id` → Formulário editar usuário
+- `POST /users` → Criar usuário
+- `POST /users/edit/:id` → Atualizar usuário
+- `POST /users/delete/:id` → Excluir usuário
+- `GET /api/users/api` → Listar usuários (JSON)
 
 ## 🎨 Características da Interface
 
 ### Design Responsivo
-- **Desktop**: Layout completo com navegação lateral
+- **Desktop**: Layout completo com navegação otimizada
 - **Tablet**: Adaptação de grid e espaçamentos
 - **Mobile**: Layout vertical otimizado para touch
 
@@ -191,17 +247,19 @@ O sistema utiliza duas tabelas principais:
 ## 📝 Scripts Disponíveis
 
 ```bash
-npm start          # Inicia o servidor
-npm run dev        # Modo desenvolvimento (com nodemon)
-npm test           # Executa testes (se configurados)
+npm start          # Inicia o servidor em modo produção
+npm run dev        # Inicia em modo desenvolvimento (nodemon)
+npm test           # Executa testes (Jest)
+npm run test:coverage  # Executa testes com cobertura
+npm run init-db    # Inicializa o banco de dados
 ```
 
-## 📄 Documentação
+## 📚 Documentação Adicional
 
-Para documentação completa do projeto, consulte:
-- **Documentação Técnica**: `documentos/wad.md`
-- **Script do Banco**: `scripts/init.sql`
-- **Estrutura MVC**: Organização em `models/`, `views/`, `controllers/`
+- **[📖 Documentação Técnica Completa](documentos/wad.md)** - WAD com decisões técnicas e aprendizados
+- **[🗄️ Script do Banco](scripts/init.sql)** - Estrutura completa do banco de dados
+- **[🎮 Controllers](controllers/)** - Lógica de negócio detalhada
+- **[📊 Models](models/)** - Modelos de dados e queries
 
 ## 👨‍💻 Autor
 
@@ -210,4 +268,6 @@ Para documentação completa do projeto, consulte:
 
 ---
 
-⭐ **Sistema completo de gerenciamento de tarefas com arquitetura MVC robusta!**
+⭐ **Se este projeto foi útil para você, considere dar uma estrela!**
+
+🚀 **Sistema completo de gerenciamento de tarefas com arquitetura MVC robusta!**
