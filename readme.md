@@ -14,20 +14,22 @@ O **Sistema Gerenciador de Tarefas MVC** é uma aplicação web completa desenvo
 ### 🎥 Demonstração
 
 > **[📹 Vídeo de Demonstração](LINK_DO_VIDEO_AQUI)**
-> 
-> *Assista ao vídeo completo mostrando todas as funcionalidades do sistema em ação.*
+>
+> _Assista ao vídeo completo mostrando todas as funcionalidades do sistema em ação._
 
 ### 📸 Interface do Sistema
 
-*Screenshots serão adicionados aqui mostrando:*
-- *Tela principal com lista de tarefas*
-- *Formulário de criação de tarefa*
-- *Gerenciamento de usuários*
-- *Interface responsiva em mobile*
+_Screenshots serão adicionados aqui mostrando:_
+
+- _Tela principal com lista de tarefas_
+- _Formulário de criação de tarefa_
+- _Gerenciamento de usuários_
+- _Interface responsiva em mobile_
 
 ### ✨ Funcionalidades Principais
 
 **🔧 Gestão de Tarefas:**
+
 - ✅ Criar, visualizar, editar e excluir tarefas
 - ✅ Marcar/desmarcar como concluídas
 - ✅ Associar responsáveis (usuários)
@@ -35,12 +37,14 @@ O **Sistema Gerenciador de Tarefas MVC** é uma aplicação web completa desenvo
 - ✅ Validações robustas de formulário
 
 **👥 Gestão de Usuários:**
+
 - ✅ Cadastrar, visualizar, editar e excluir usuários
 - ✅ Validação de email único
 - ✅ Proteção contra exclusões inválidas
 - ✅ Verificação de integridade referencial
 
 **🎨 Interface e Experiência:**
+
 - ✅ Design responsivo (desktop, tablet, mobile)
 - ✅ Notificações inteligentes de sucesso/erro
 - ✅ Confirmações de segurança para ações destrutivas
@@ -50,18 +54,21 @@ O **Sistema Gerenciador de Tarefas MVC** é uma aplicação web completa desenvo
 ## 🛠️ Tecnologias Utilizadas
 
 ### Backend
+
 - **Node.js** - Runtime JavaScript
 - **Express.js** - Framework web
 - **PostgreSQL** - Banco de dados relacional
 - **pg** - Driver PostgreSQL para Node.js
 
 ### Frontend
+
 - **EJS** - Template engine para renderização dinâmica
 - **CSS Customizado** - Estilização responsiva
 - **JavaScript Vanilla** - Interatividade sem dependências
 - **Fetch API** - Comunicação assíncrona com backend
 
 ### Arquitetura
+
 - **MVC Pattern** - Separação clara de responsabilidades
 - **RESTful APIs** - Endpoints padronizados
 - **SQL Nativo** - Controle direto sobre queries
@@ -129,12 +136,14 @@ npm install
 ### Passo 3: Configure o banco de dados
 
 #### 3.1 Crie o banco de dados
+
 ```bash
 # No terminal do PostgreSQL ou pgAdmin
 createdb task_manager
 ```
 
 #### 3.2 Execute o script de inicialização
+
 ```bash
 # Opção 1: Via psql
 psql -d task_manager -f scripts/init.sql
@@ -206,6 +215,7 @@ CREATE TABLE tasks (
 ```
 
 ### Relacionamentos
+
 - **1:N** → Um usuário pode ter múltiplas tarefas
 - **Opcional** → Uma tarefa pode ter um usuário responsável ou ser independente
 - **Integridade** → ON DELETE SET NULL mantém tarefas mesmo se usuário for excluído
@@ -213,6 +223,7 @@ CREATE TABLE tasks (
 ## 🌐 Endpoints da API
 
 ### 📋 Tarefas
+
 - `GET /tasks` → Lista de tarefas (página web)
 - `GET /tasks/new` → Formulário nova tarefa
 - `GET /tasks/edit/:id` → Formulário editar tarefa
@@ -223,6 +234,7 @@ CREATE TABLE tasks (
 - `GET /api/tasks/api` → Listar tarefas (JSON)
 
 ### 👥 Usuários
+
 - `GET /users` → Lista de usuários (página web)
 - `GET /users/new` → Formulário novo usuário
 - `GET /users/edit/:id` → Formulário editar usuário
@@ -234,11 +246,13 @@ CREATE TABLE tasks (
 ## 🎨 Características da Interface
 
 ### Design Responsivo
+
 - **Desktop**: Layout completo com navegação otimizada
 - **Tablet**: Adaptação de grid e espaçamentos
 - **Mobile**: Layout vertical otimizado para touch
 
 ### Componentes Interativos
+
 - **Notificações**: Mensagens automáticas com auto-remoção
 - **Confirmações**: Popups inteligentes para ações destrutivas
 - **Loading States**: Feedback visual durante operações
@@ -264,10 +278,10 @@ npm run init-db    # Inicializa o banco de dados
 ## 👨‍💻 Autor
 
 **Christian Vinícius Gandra dos Santos**
+
 - Projeto Individual - Módulo 2 - Inteli
 
 ---
 
-⭐ **Se este projeto foi útil para você, considere dar uma estrela!**
 
 🚀 **Sistema completo de gerenciamento de tarefas com arquitetura MVC robusta!**
